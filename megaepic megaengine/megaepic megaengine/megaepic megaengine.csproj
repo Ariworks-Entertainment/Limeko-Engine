@@ -29,6 +29,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Engine\Core\LimekoUtils.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="Engine\Data\Icon\Limeko icon.ico">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
