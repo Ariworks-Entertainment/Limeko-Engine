@@ -6,16 +6,23 @@ If you'd like to learn more, visit the [Official Website](https://violetv0id.git
 > [!IMPORTANT]
 > Limeko is very early in development, and is not a functional "Game Engine". Core framework is still being made and polished.
 
+# Requirements
+*(Linux will be supported, and hopefully MacOS too, but not super soon.)*
+- Windows 10 or higher
+- Modern-ish GPU (post-2012)
+- [Net8](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
+
 # Render-Pipe Presets
 What are Render-Pipe Presets (RPPs)?
 
 Limeko runs on *one* Render Pipeline. RPPs are like pre-made configurations that let you decide early on what you want to prioritize.
-- Viola: Favors fidelity. Volumetric Fog, SSR, SSAO, and high-definition baked lighting settings the second you create the project.
-- Citron: A nice middle-ground. Optimized to run okay on low-end hardware, and run with plenty of headroom on modern computers.
-- Lime - The highest performance preset. Made for standalone platforms like Quest, or mobile devices such as tablets or smart-phones.
+- Viola: Favors prettiness. Start with high-fidelity settings the second you create the project.
+- Citron: A nice middle-ground. Optimized to run well on low-end hardware, and run with plenty of headroom on modern computers.
+- Lime - The highest performance preset. Built versions of your game will be lightweight and capable of being run on weaker machines.
 
 > [!NOTE]
-> Limeko does not have multiple Render Pipelines. Instead, it runs on one very flexible Render Pipeline with lots of toggles and settings.
+> Limeko does not have multiple Render-Pipelines. Instead, it runs on one very flexible Pipeline with lots of toggles and settings.\
+> Selecting a preset does not limit your Project. All RPPs can technically run on the same hardware.
 
 # Physics
 Limeko's native physics engine is [Bepu](https://github.com/bepu/bepuphysics2). Bepu is a lightweight, open-source Physics library, like Nvidia's PhysX.
@@ -48,5 +55,6 @@ You'll get the best experience Limeko can offer.
 - OpenGL - https://www.opengl.org/
 - Vulkan - https://www.vulkan.org/
 - Limeko Website - https://violetv0id.github.io/lunark.github.io/limeko.html
+- Microsoft DotNet 8.0 - https://dotnet.microsoft.com/en-us/download/dotnet/8.0
 - Bepu Physics V2 - https://github.com/bepu/bepuphysics2
-- Limeko Feature Request (Issues) - https://github.com/violetv0id/Limeko-Engine/issues
+- Limeko Feature Request / Issues - https://github.com/violetv0id/Limeko-Engine/issues
