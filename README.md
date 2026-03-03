@@ -43,3 +43,10 @@ You'll get the best experience Limeko can offer.
 - Vulkan Support
 - Improved traditional lighting methods
 - Volumetric lighting & Fog Volumes
+
+## Links (In Order)
+- OpenGL - https://www.opengl.org/
+- Vulkan - https://www.vulkan.org/
+- Limeko Website - https://violetv0id.github.io/lunark.github.io/limeko.html
+- Bepu Physics V2 - https://github.com/bepu/bepuphysics2
+- Limeko Feature Request (Issues) - https://github.com/violetv0id/Limeko-Engine/issues
