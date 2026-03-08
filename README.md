@@ -1,13 +1,13 @@
 > [!CAUTION]
-> Nixel is currently undergoing a **recode**. Previously working features (Basic rendering, Physics) are either no longer working, no longer implemented, or are unpolished.
+> Limeko is currently undergoing a **recode**. Previously working features (Basic rendering, Physics) are either no longer working, no longer implemented, or are unpolished.
 
-# Nixel Engine
+# Limeko Engine
 A flexible, Open-Source Game Engine made to combine all of the best features into one lightweight stack. Runs Natively on [OpenGL](https://www.opengl.org/), with planned support for [Vulkan](https://www.vulkan.org/).
 
-If you'd like to learn more, visit the [Official Website](https://violetv0id.github.io/lunark.github.io/Nixel.html)!
+If you'd like to learn more, visit the [Official Website](https://violetv0id.github.io/lunark.github.io/Limeko.html)!
 
 > [!IMPORTANT]
-> Nixel is very early in development, and is not a functional "Game Engine". Core framework is still being made and polished.
+> Limeko is very early in development, and is not a functional "Game Engine". Core framework is still being made and polished.
 
 # Requirements
 *(Linux will be supported, and hopefully MacOS too, but not super soon.)*
@@ -18,23 +18,23 @@ If you'd like to learn more, visit the [Official Website](https://violetv0id.git
 # Render-Pipe Presets
 What are Render-Pipe Presets (RPPs)?
 
-Nixel runs on *one* Render Pipeline. RPPs are like pre-made configurations that let you decide early on what you want to prioritize.
+Limeko runs on *one* Render Pipeline. RPPs are like pre-made configurations that let you decide early on what you want to prioritize.
 - Viola: Favors prettiness. Start with high-fidelity settings the second you create the project.
 - Citron: A nice middle-ground. Optimized to run well on low-end hardware, and run with plenty of headroom on modern computers.
 - Lime - The highest performance preset. Built versions of your game will be lightweight and capable of being run on weaker machines.
 
 > [!NOTE]
-> Nixel does not have multiple Render-Pipelines. Instead, it runs on one very flexible Pipeline with lots of toggles and settings.\
+> Limeko does not have multiple Render-Pipelines. Instead, it runs on one very flexible Pipeline with lots of toggles and settings.\
 > Selecting a preset does not limit your Project. All RPPs can technically run on the same hardware.
 
 # Physics
-Nixel's native physics engine is [Bepu](https://github.com/bepu/bepuphysics2). Bepu is a lightweight, open-source Physics library, like Nvidia's PhysX.
+Limeko's native physics engine is [Bepu](https://github.com/bepu/bepuphysics2). Bepu is a lightweight, open-source Physics library, like Nvidia's PhysX.
 
-Bepu was etched into Nixel from as early as the first week of development, meaning it's systems revolve around it, but don't depend on it.
-You'll get the best experience Nixel can offer.
+Bepu was etched into Limeko from as early as the first week of development, meaning it's systems revolve around it, but don't depend on it.
+You'll get the best experience Limeko can offer.
 
 # Roadmap
-(<i>If you'd like to suggest features, send them [here](https://github.com/violetv0id/Nixel-Engine/issues)!</i>)
+(<i>If you'd like to suggest features, send them [here](https://github.com/violetv0id/Limeko-Engine/issues)!</i>)
 
 ### In Progress
 - Render Pipeline Framework
@@ -57,7 +57,7 @@ You'll get the best experience Nixel can offer.
 ## Links (In Order)
 - OpenGL - https://www.opengl.org/
 - Vulkan - https://www.vulkan.org/
-- Nixel Website - https://violetv0id.github.io/lunark.github.io/Nixel.html
+- Limeko Website - https://violetv0id.github.io/lunark.github.io/Limeko.html
 - Microsoft DotNet 8.0 - https://dotnet.microsoft.com/en-us/download/dotnet/8.0
 - Bepu Physics V2 - https://github.com/bepu/bepuphysics2
-- Nixel Feature Request / Issues - https://github.com/violetv0id/Nixel-Engine/issues
+- Limeko Feature Request / Issues - https://github.com/violetv0id/Limeko-Engine/issues
