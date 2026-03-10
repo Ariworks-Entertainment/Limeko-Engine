@@ -197,7 +197,7 @@ namespace Limeko
 
         /// <summary>
         /// Holds a Shader, and displays instanced variables for it.
-        /// (Per-Material same-shader control)
+        /// (Per-Material shader instance control control)
         /// </summary>
         public class Material
         {
