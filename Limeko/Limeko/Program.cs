@@ -28,11 +28,12 @@ namespace Limeko
 
             public static Vector2 WindowSize;
 
+            // mouse control // eventually move to a separate Input class.
             Vector2 _lastMouse;
             bool _firstMove = true;
             float _sensitivity = 0.15f;
 
-            static int targetFrameRate = 90;
+            public static int targetFrameRate = 90;
 
 
             static GameWindowSettings gameSettings = new GameWindowSettings()
@@ -176,6 +177,50 @@ namespace Limeko
             {
                 Console.WriteLine("Not Implemented.");
             }
+        }
+    }
+
+    public class Input
+    {
+        // not implemented
+    }
+
+    public class Rendering
+    {
+        // not implemented
+    }
+
+    public class Physics
+    {
+        public static Vector3 gravity = new Vector3(0f, 9.81f, 0f);
+        // not implemented
+    }
+
+    public class Audio
+    {
+        /// <summary>
+        /// Plays Audio in both 2D stereo space and 3D world space.
+        /// </summary>
+        public class Speaker
+        {
+            public AudioTrack? track;
+            public float volume;
+            public float pitch;
+
+            public float spatialMix = 0f;
+            // not implemented
+        }
+
+        /// <summary>
+        /// A generalized class for all supported audio types. (.mp3, .wav, etc.)
+        /// </summary>
+        public class AudioTrack
+        {
+            // not implemented
+            /*
+            public AudioCodec codec { get; private set; }
+            public byte[] audioData;
+            */
         }
     }
 }
