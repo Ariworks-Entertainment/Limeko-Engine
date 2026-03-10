@@ -54,23 +54,26 @@ namespace Limeko
             public Window() : base(gameSettings, windowSettings)
             { }
 
-            protected override void OnLoad()
+            protected override async void OnLoad()
             {
                 base.OnLoad();
+
+                // Initialize the Editor window.
+                // UI, Editor subsystems, etc.
+                // Do *not* Initialize Physics--that's for runtime.
+
+                // Slowly learning from my mistakes.
+
+
                 Console.WriteLine("<--> Starting Editor (Internal) <-->");
 
                 WindowSize = new Vector2(Size.X, Size.Y);
 
-
-                GL.Enable(EnableCap.CullFace);
-                GL.Enable(EnableCap.Blend);
-                GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
-                GL.FrontFace(FrontFaceDirection.Ccw);
-
-
+                Rendering.ConfigureOpenGL();
 
                 Console.WriteLine("> Setting background");
-                GL.ClearColor(0.63f, 1f, 0.3f, 1f);
+                // Slightly above black to avoid confusion
+                GL.ClearColor(0.02f, 0.02f, 0.02f, 1f);
 
                 Console.WriteLine("OpenGL Core Running.");
 
@@ -88,6 +91,7 @@ namespace Limeko
             protected override void OnUnload()
             {
                 base.OnUnload();
+                // Dispose of all Shaders, free any assets, etc.
                 // _shader.Dispose();
             }
 
@@ -95,6 +99,8 @@ namespace Limeko
             {
                 base .OnUpdateFrame(e);
                 // Runs every frame.
+
+                // Input.Update();
             }
 
             protected override void OnResize(ResizeEventArgs e)
@@ -187,7 +193,18 @@ namespace Limeko
 
     public class Rendering
     {
-        // not implemented
+        // Logic
+
+        public static void ConfigureOpenGL()
+        {
+            GL.Enable(EnableCap.CullFace);
+            GL.Enable(EnableCap.Blend);
+            GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
+            GL.FrontFace(FrontFaceDirection.Ccw);
+        }
+
+
+        // Components
 
         public class Renderer
         {
@@ -225,6 +242,9 @@ namespace Limeko
             public Transform transform;
         }
 
+        /// <summary>
+        /// Controls the position, rotation, and scale of an entity, and additionally all of it's children.
+        /// </summary>
         public class Transform
         {
             public Vector3 position;
@@ -235,8 +255,13 @@ namespace Limeko
 
     public class Physics
     {
-        public static Vector3 gravity = new Vector3(0f, 9.81f, 0f);
-        // not implemented
+        public static Vector3 gravity = new Vector3(0f, 9.80665f, 0f);
+        // not fully implemented
+
+        public void StartSimulation()
+        {
+            throw new Exception("Fuck naw");
+        }
     }
 
     public class Audio
