@@ -12,6 +12,9 @@ namespace Limeko
 {
     public class Core
     {
+        /// <summary>
+        /// The static instance of this program's active window.
+        /// </summary>
         public static Window WindowInstance { get; private set; }
 
         public static void Main()
