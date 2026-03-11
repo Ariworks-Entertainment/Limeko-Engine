@@ -1,0 +1,20 @@
+Limeko Rendering Stack
+(Concept)
+
+
+#= Draw-Calls =#
+A common issue with rendering in video games is that too many draw calls is wasteful, while not splitting
+draw calls up into multiple can make it even worse.
+
+Limeko's Entity Renderer Components will be able to link with other Renderers to be drawn as one collective
+mesh instead of two separate meshes.
+
+In the Editor, they're both separate objects. In-game? they still appear as separate objects.
+To the Rendering Library? One collective draw-call, only with different textures / materials.
+
+So, Rendering would work like so:
+Each Renderer component draws itself, but it also draws any 'Child Renderers' assigned to it.
+'Child Renderers' are still just Renderer components, only instead of rendering themselves, they
+present their data to the 'Parent Renderer' to decrease draw-calls.
+
+'Child Renderers' can only have one parent, and 'Parent Renderers' cannot be a child of another renderer.

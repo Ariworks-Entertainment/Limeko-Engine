@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Limeko")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c738407464ded3652c8f4bbed81c148e5378d6d1")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f029c462a29a4148beb42c392b76cbc0df003225")]
 [assembly: System.Reflection.AssemblyProductAttribute("Limeko")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Limeko")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
