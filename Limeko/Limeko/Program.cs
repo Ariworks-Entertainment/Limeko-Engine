@@ -7,6 +7,7 @@ using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Common.Input;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
+using System.Runtime.Versioning;
 
 namespace Limeko
 {
@@ -339,7 +340,12 @@ namespace Limeko
         /// </summary>
         public static void EditorInit()
         {
-
+            // Configure and Assign the Default Project Path.
+            // Eventually support settings like a custom path.
+            string programData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            string dP = Path.Combine(programData, "Limeko/Projects");
+            if(!Directory.Exists(dP)) Directory.CreateDirectory(dP);
+            defaultProjectPath = dP;
         }
 
         /// <summary>
