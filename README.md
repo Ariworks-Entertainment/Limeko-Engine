@@ -2,13 +2,18 @@
 > Limeko is currently undergoing a **recode**. Previously working features (Basic rendering, Physics) are either no longer working, no longer implemented, or are unpolished.\
 > [Learn More](https://github.com/violetv0id/Limeko-Engine/blob/7183eaa26216d777c41db882e531d240dfe33a03/rc_exp.md)
 
+> [!IMPORTANT]
+> Limeko is very early in development, and is not a functional "Game Engine". Core framework is still being made and polished.
+
+![License](https://img.shields.io/github/license/ariworks-entertainment/limeko-engine) [![Support on Ko-fi](https://img.shields.io/badge/Support%20on-Ko--fi-FF5E5B?logo=ko-fi&logoColor=white)](https://ko-fi.com/ariworks_entertainment) [![Discord](https://img.shields.io/badge/discord-5865F2?logo=discord&logoColor=white)](https://discord.gg/ADW466aatQ)
+
+‎ ‎ 
+‎ ‎ 
+
 # Limeko Engine
 A flexible, Open-Source Game Engine made to combine all of the best features into one lightweight stack. Runs Natively on [OpenGL](https://www.opengl.org/), with planned support for [Vulkan](https://www.vulkan.org/).
 
 If you'd like to learn more, visit the [Official Website](https://violetv0id.github.io/lunark/limeko.html)!
-
-> [!IMPORTANT]
-> Limeko is very early in development, and is not a functional "Game Engine". Core framework is still being made and polished.
 
 # Requirements
 *(Linux will be supported, and hopefully MacOS too, but not super soon.)*
