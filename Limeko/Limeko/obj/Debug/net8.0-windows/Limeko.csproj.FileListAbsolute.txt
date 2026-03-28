@@ -78,3 +78,17 @@ C:\Users\Nicole\OneDrive\Documents\GitHub\Limeko-Engine\Limeko\Limeko\bin\Debug\
 C:\Users\Nicole\OneDrive\Documents\GitHub\Limeko-Engine\Limeko\Limeko\bin\Debug\net8.0-windows\Avalonia.Remote.Protocol.dll
 C:\Users\Nicole\OneDrive\Documents\GitHub\Limeko-Engine\Limeko\Limeko\bin\Debug\net8.0-windows\MicroCom.Runtime.dll
 C:\Users\Nicole\OneDrive\Documents\GitHub\Limeko-Engine\Limeko\Limeko\obj\Debug\net8.0-windows\Avalonia\Resources.Inputs.cache
+C:\Users\Violet\Documents\GitHub\Limeko-Engine\Limeko\Limeko\bin\Debug\net8.0-windows\Avalonia.Base.dll
+C:\Users\Violet\Documents\GitHub\Limeko-Engine\Limeko\Limeko\bin\Debug\net8.0-windows\Avalonia.Controls.dll
+C:\Users\Violet\Documents\GitHub\Limeko-Engine\Limeko\Limeko\bin\Debug\net8.0-windows\Avalonia.DesignerSupport.dll
+C:\Users\Violet\Documents\GitHub\Limeko-Engine\Limeko\Limeko\bin\Debug\net8.0-windows\Avalonia.Dialogs.dll
+C:\Users\Violet\Documents\GitHub\Limeko-Engine\Limeko\Limeko\bin\Debug\net8.0-windows\Avalonia.Markup.Xaml.dll
+C:\Users\Violet\Documents\GitHub\Limeko-Engine\Limeko\Limeko\bin\Debug\net8.0-windows\Avalonia.Markup.dll
+C:\Users\Violet\Documents\GitHub\Limeko-Engine\Limeko\Limeko\bin\Debug\net8.0-windows\Avalonia.Metal.dll
+C:\Users\Violet\Documents\GitHub\Limeko-Engine\Limeko\Limeko\bin\Debug\net8.0-windows\Avalonia.MicroCom.dll
+C:\Users\Violet\Documents\GitHub\Limeko-Engine\Limeko\Limeko\bin\Debug\net8.0-windows\Avalonia.OpenGL.dll
+C:\Users\Violet\Documents\GitHub\Limeko-Engine\Limeko\Limeko\bin\Debug\net8.0-windows\Avalonia.Vulkan.dll
+C:\Users\Violet\Documents\GitHub\Limeko-Engine\Limeko\Limeko\bin\Debug\net8.0-windows\Avalonia.dll
+C:\Users\Violet\Documents\GitHub\Limeko-Engine\Limeko\Limeko\bin\Debug\net8.0-windows\Avalonia.Remote.Protocol.dll
+C:\Users\Violet\Documents\GitHub\Limeko-Engine\Limeko\Limeko\bin\Debug\net8.0-windows\MicroCom.Runtime.dll
+C:\Users\Violet\Documents\GitHub\Limeko-Engine\Limeko\Limeko\obj\Debug\net8.0-windows\Avalonia\Resources.Inputs.cache

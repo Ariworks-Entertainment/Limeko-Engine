@@ -16,6 +16,8 @@ namespace Limeko
 {
     public class Core
     {
+        public static string Version = "0.0.0-alpha";
+
         /// <summary>
         /// The static instance of this program's active window.
         /// </summary>
@@ -47,8 +49,8 @@ namespace Limeko
 
             static NativeWindowSettings windowSettings = new NativeWindowSettings()
             {
-                MinimumClientSize = new Vector2i(320, 180),
-                ClientSize = new Vector2i(1280, 720),
+                MinimumClientSize = new Vector2i(920, 550),
+                ClientSize = new Vector2i(1560, 960),
                 WindowState = WindowState.Normal,
                 Vsync = VSyncMode.On,
                 Title = "Limeko",
@@ -69,18 +71,21 @@ namespace Limeko
 
                 // Slowly learning from my mistakes.
 
-                Editor.EditorInit();
+                // start internal stuff.
+                Editor.InitializeCore();
 
 
                 Console.WriteLine("<--> Starting Editor (Internal) <-->");
 
+                // sizing
                 WindowSize = new Vector2(Size.X, Size.Y);
 
+                // general configuration
                 Rendering.ConfigureOpenGL();
 
                 Console.WriteLine("> Setting background");
-                // Slightly above black to avoid confusion
-                GL.ClearColor(0.02f, 0.02f, 0.02f, 1f);
+                // slightly above black to avoid confusion
+                GL.ClearColor(0.04f, 0.04f, 0.04f, 1f);
 
                 Console.WriteLine("OpenGL Core Running.");
 
@@ -91,6 +96,8 @@ namespace Limeko
 
                 Editor.Utils.Misc.PrintLimeko(true);
                 Editor.Utils.Misc.PrintLicenseDisclaimer();
+                Console.WriteLine("");
+                Editor.Utils.Misc.PrintVersionInfo();
 
                 Console.WriteLine("\n\n#= Dev-Stats =#\n");
 
@@ -126,6 +133,7 @@ namespace Limeko
                 base.OnResize(e);
                 GL.Viewport(0, 0, Size.X, Size.Y);
                 WindowSize = new Vector2(Size.X, Size.Y);
+                Console.WriteLine($"Resized: {Size}");
             }
 
             protected override void OnRenderFrame(OpenTK.Windowing.Common.FrameEventArgs e)
@@ -366,16 +374,27 @@ namespace Limeko
         public static string defaultProjectPath = "";
 
         /// <summary>
-        /// Initialiezes core User and Editor data.
+        /// Initializes core User and Editor data.
+        /// Internal Method--Don't call directly!
         /// </summary>
-        public static void EditorInit()
+        public static void InitializeCore()
         {
             // Configure and Assign the Default Project Path.
             // Eventually support settings like a custom path.
             string programData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             string dP = Path.Combine(programData, "Limeko/Projects");
-            if(!Directory.Exists(dP)) Directory.CreateDirectory(dP);
+            if (!Directory.Exists(dP)) Directory.CreateDirectory(dP);
             defaultProjectPath = dP;
+        }
+
+
+        /// <summary>
+        /// Initializes the core Editor logic.
+        /// Internal Method--Don't call directly!
+        /// </summary>
+        public static void InitializeEditor()
+        {
+
         }
 
         /// <summary>
@@ -446,6 +465,27 @@ namespace Limeko
                     Console.WriteLine("This program comes with ABSOLUTELY NO WARRANTY.");
                     Console.WriteLine("This is free software, and you are welcome to redistribute it");
                     Console.WriteLine("under certain conditions. Press F9 to learn more.");
+                }
+
+                public static void PrintVersionInfo()
+                {
+                    Console.WriteLine($"Version {Core.Version}");
+
+                    switch(Core.Version.Split('-').Last())
+                    {
+                        case "alpha":
+                            Console.WriteLine("You are running an ALPHA version of Limeko. Don't expect a flawless experience.");
+                            break;
+                        case "beta":
+                            Console.WriteLine("You are running a BETA version of Limeko. Issues are to be expected.");
+                            break;
+                        case "stable":
+                            Console.WriteLine("You are running a STABLE version of Limeko.");
+                            break;
+                        default:
+                            Console.WriteLine("Unknown version type.");
+                            break;
+                    }
                 }
 
                 public static void OpenWebpage(string url)
