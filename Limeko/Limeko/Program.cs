@@ -108,7 +108,7 @@ namespace Limeko
                 Console.WriteLine("> Bepu: Not Implemented");
                 Console.WriteLine("> Editor UI: Not Implemented");
                 Console.WriteLine("> Render Pipeline: Not Implemented");
-                Console.WriteLine("> Audio System: Not Implemented");
+                Console.WriteLine("> Audio System: Not Implemented\n");
 
                 this.IsVisible = true;
             }
@@ -125,7 +125,8 @@ namespace Limeko
                 base .OnUpdateFrame(e);
                 // Runs every frame.
 
-                Input.Update(KeyboardState);
+                Input.Update(); // Update Input before components!!
+                EntitySystem.Update();
             }
 
             protected override void OnResize(ResizeEventArgs e)
@@ -138,7 +139,6 @@ namespace Limeko
 
             protected override void OnRenderFrame(OpenTK.Windowing.Common.FrameEventArgs e)
             {
-
                 GL.Enable(EnableCap.DepthTest);
                 GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
@@ -231,7 +231,7 @@ namespace Limeko
         /// <summary>
         /// An internal method for updating inputs. Do not call this directly!
         /// </summary>
-        public static void Update(KeyboardState keyboard)
+        public static void Update()
         {
             
         }
@@ -262,7 +262,7 @@ namespace Limeko
         {
             GL.Enable(EnableCap.CullFace); // don't cull faces we can't see
             GL.Enable(EnableCap.Blend); // dunno?
-            GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha); // some sort of bleding for transparency(?)
+            GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha); // some sort of blending for transparency(?)
             GL.FrontFace(FrontFaceDirection.Ccw); // counter-clockwise faces are ignored(?)
         }
 
@@ -277,17 +277,17 @@ namespace Limeko
 
         /// <summary>
         /// Holds a Shader, and displays instanced variables for it.
-        /// (Per-Material shader instance control control)
+        /// (Per-Material Shader Instance Control)
         /// </summary>
         public class Material
         {
             // creating a new material defaults to Lit.
             public Material()
             {
-                // shader = Renderer.DefaultLit();
+                // Shader = Renderer.DefaultLit();
             }
 
-            public Shader shader;
+            public Shader Shader;
         }
 
         /// <summary>
@@ -301,14 +301,23 @@ namespace Limeko
 
     public class EntitySystem
     {
+        public static event EventHandler OnUpdate;
+
+        public static void Update()
+        {
+            OnUpdate.Invoke(null, EventArgs.Empty);
+        }
+
+
         /// <summary>
         /// The base class for every object.
         /// Serves as a 'GameObject' component.
         /// </summary>
         public class Entity
         {
-            public string name;
-            public Transform transform;
+            public required string name;
+            public required int id;
+            public Transform transform = new();
         }
 
         /// <summary>
@@ -333,6 +342,14 @@ namespace Limeko
         public void StartSimulation()
         {
             throw new Exception("Fuck naw");
+        }
+    }
+
+    public class Levels
+    {
+        public static void CreateNew()
+        {
+
         }
     }
 
@@ -381,10 +398,12 @@ namespace Limeko
         {
             // Configure and Assign the Default Project Path.
             // Eventually support settings like a custom path.
-            string programData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            string programData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
             string dP = Path.Combine(programData, "Limeko/Projects");
             if (!Directory.Exists(dP)) Directory.CreateDirectory(dP);
             defaultProjectPath = dP;
+
+            // list projects
         }
 
 
@@ -413,7 +432,10 @@ namespace Limeko
         /// </summary>
         public static void UnloadProject()
         {
-
+            if(Editor.Utils.GetActiveProjectPath() != null)
+            {
+                // Dispose & Unload.
+            }
         }
 
         public static class SplashScreen

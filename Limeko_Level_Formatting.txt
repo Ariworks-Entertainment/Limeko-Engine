@@ -1,0 +1,9 @@
+Every Level holds data of every Entity within said Level.
+From it's position, to it's Components, to it's children or parents.
+
+Loading a project just loads Level data, and the last stored Scene Camera-
+-Transform.
+
+Levels hold the data of everything within it.
+Every single object has an Entity component, and a Transform component.
+Neither can be removed.
