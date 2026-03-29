@@ -125,8 +125,11 @@ namespace Limeko
                 base .OnUpdateFrame(e);
                 // Runs every frame.
 
+                // Should only execute during runtime.
+                /*
                 Input.Update(); // Update Input before components!!
                 EntitySystem.Update();
+                */
             }
 
             protected override void OnResize(ResizeEventArgs e)
@@ -261,9 +264,9 @@ namespace Limeko
         public static void ConfigureOpenGL()
         {
             GL.Enable(EnableCap.CullFace); // don't cull faces we can't see
-            GL.Enable(EnableCap.Blend); // dunno?
+            GL.Enable(EnableCap.Blend); // allow transparency
             GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha); // some sort of blending for transparency(?)
-            GL.FrontFace(FrontFaceDirection.Ccw); // counter-clockwise faces are ignored(?)
+            GL.FrontFace(FrontFaceDirection.Ccw); // keep counter-clockwise faces
         }
 
 
@@ -302,6 +305,11 @@ namespace Limeko
     public class EntitySystem
     {
         public static event EventHandler OnUpdate;
+
+        public static void Awake()
+        {
+            OnUpdate = new EventHandler(OnUpdate);
+        }
 
         public static void Update()
         {
