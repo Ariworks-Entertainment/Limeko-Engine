@@ -1,22 +1,17 @@
 ﻿using Avalonia;
-using BepuPhysics;
 using BepuPhysics.Collidables;
-using OpenTK.Core;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
-using OpenTK.Windowing.Common.Input;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using System.Diagnostics;
-using System.Drawing;
-using System.Runtime.Versioning;
 
 namespace Limeko
 {
     public class Core
     {
-        public static string Version = "0.0.0-alpha";
+        public static string Version = "dev-0.0.0-alpha";
 
         /// <summary>
         /// The static instance of this program's active window.
@@ -103,14 +98,24 @@ namespace Limeko
 
                 Console.WriteLine($"> Project Path: {Editor.Utils.GetActiveProjectPath()}");
                 Console.WriteLine($"> Default Project Path: {Editor.Utils.GetDefaultProjectPath()}\n");
+                Console.WriteLine($"| Found {Editor.projects.Count} Projects:");
+                foreach(string project in Editor.projects) Console.WriteLine($"| > {project.Split("\\").Last()}");
+                Console.WriteLine("");
 
-                Console.WriteLine("> OpenGL: Running & Configured");
-                Console.WriteLine("> Bepu: Not Implemented");
-                Console.WriteLine("> Editor UI: Not Implemented");
-                Console.WriteLine("> Render Pipeline: Not Implemented");
-                Console.WriteLine("> Audio System: Not Implemented\n");
+                Console.Write("Load Project: ");
+                string projectToLoad = Console.ReadLine(); // <-- TEMPORARY
+                // eventually replace this code with logic for Dear ImGUI stuff.
 
-                this.IsVisible = true;
+                foreach(string project in Editor.projects)
+                {
+                    if(project.Contains(projectToLoad, StringComparison.OrdinalIgnoreCase))
+                    {
+                        await Editor.LoadProject(project);
+                        this.IsVisible = true;
+                        return;
+                    }
+                }
+                Console.WriteLine("Fail");
             }
 
             protected override void OnUnload()
@@ -173,32 +178,7 @@ namespace Limeko
                 */
 
 
-                // PER-OBJECT RENDERING
-                /*
-                foreach (var obj in RenderingCore.GetRegistered())
-                {
-                    obj.Material.Bind();
-
-                    var shader = obj.Material.Shader;
-
-                    shader.SetInt("uLightCount", 1);
-
-                    shader.SetVector3("uLightDirs[0]",
-                        Vector3.Normalize(new Vector3(-0.3f, -1f, -0.2f)));
-
-                    shader.SetVector3("uLightColors[0]", Vector3.One);
-                    shader.SetFloat("uLightIntensity[0]", 1.0f);
-
-                    // optional but important
-                    shader.SetFloat("uAmbient", 0.2f);
-
-                    obj.Material.Shader.SetMatrix4("uModel", obj.GetModelMatrix());
-                    obj.Material.Shader.SetMatrix4("uView", view);
-                    obj.Material.Shader.SetMatrix4("uProjection", projection);
-
-                    obj.Mesh.Draw(Limeko.Core.WindowInstance._showDebug ? PrimitiveType.Lines : PrimitiveType.Triangles);
-                }
-                */
+                Rendering.Update();
 
                 SwapBuffers();
             }
@@ -224,7 +204,7 @@ namespace Limeko
         // Maybe switch to an input library?
 
 
-        // mouse control // eventually move to a separate Input class.
+        // mouse control
         Vector2 _lastMouse;
         bool _firstMove = true;
         float _sensitivity = 0.15f;
@@ -258,8 +238,10 @@ namespace Limeko
     {
         // Logic
 
+        private static List<Renderer> registeredRenderers = new();
+
         /// <summary>
-        /// Configures OpenGL to not render backfaces and to blend.
+        /// Configures OpenGL to not render backfaces, allow transparency, etc.
         /// </summary>
         public static void ConfigureOpenGL()
         {
@@ -269,13 +251,66 @@ namespace Limeko
             GL.FrontFace(FrontFaceDirection.Ccw); // keep counter-clockwise faces
         }
 
+        public static void Register(Renderer renderer)
+        {
+            registeredRenderers.Add(renderer);
+        }
+        public static void Register(Renderer renderer, out int index)
+        {
+            registeredRenderers.Add(renderer);
+            index = registeredRenderers.IndexOf(renderer);
+        }
+
+        public static void Unregister(Renderer renderer)
+        {
+            registeredRenderers.Remove(renderer);
+        }
+        public static void Unregister(int index)
+        {
+            registeredRenderers.RemoveAt(index);
+        }
+
+        /// <summary>
+        /// Renders any Registered objects.
+        /// </summary>
+        public static void Update()
+        {
+            // PER-OBJECT RENDERING
+            foreach (var obj in registeredRenderers)
+            {
+                // Still need to complete & add the Shader class.
+                /*
+                obj.Material.Bind();
+
+                var shader = obj.Material.Shader;
+
+                shader.SetInt("uLightCount", 1);
+
+                shader.SetVector3("uLightDirs[0]",
+                    Vector3.Normalize(new Vector3(-0.3f, -1f, -0.2f)));
+
+                shader.SetVector3("uLightColors[0]", Vector3.One);
+                shader.SetFloat("uLightIntensity[0]", 1.0f);
+
+                // optional but important
+                shader.SetFloat("uAmbient", 0.2f);
+
+                obj.Material.Shader.SetMatrix4("uModel", obj.GetModelMatrix());
+                obj.Material.Shader.SetMatrix4("uView", view);
+                obj.Material.Shader.SetMatrix4("uProjection", projection);
+
+                obj.Mesh.Draw(Limeko.Core.WindowInstance._showDebug ? PrimitiveType.Lines : PrimitiveType.Triangles);
+                */
+            }
+        }
+
 
         // Components
 
         public class Renderer
         {
-            public Material material;
-            public Mesh mesh;
+            public Material Material;
+            public Mesh Mesh;
         }
 
         /// <summary>
@@ -299,6 +334,11 @@ namespace Limeko
         public class Shader
         {
 
+        }
+
+        public class Mesh
+        {
+            public required Vector3[] verticies;
         }
     }
 
@@ -398,8 +438,10 @@ namespace Limeko
         // the default location new projects are created at.
         public static string defaultProjectPath = "";
 
+        public static List<string> projects = new();
+
         /// <summary>
-        /// Initializes core User and Editor data.
+        /// Initializes core User and Engine data.
         /// Internal Method--Don't call directly!
         /// </summary>
         public static void InitializeCore()
@@ -411,7 +453,7 @@ namespace Limeko
             if (!Directory.Exists(dP)) Directory.CreateDirectory(dP);
             defaultProjectPath = dP;
 
-            // list projects
+            projects = Directory.GetDirectories(defaultProjectPath).ToList();
         }
 
 
@@ -429,9 +471,22 @@ namespace Limeko
         /// Internal Method--Don't call directly!
         /// </summary>
         /// <param name="path"></param>
-        public static void LoadProject(string path)
+        public static async Task LoadProject(string path)
         {
+            if(!projects.Contains(path)) return;
+            Console.WriteLine($"Loading {path.Split("\\").Last()}...");
+            Stopwatch loadTime = new Stopwatch();
+            loadTime.Start();
 
+            // load
+            int assetCount = 0;
+            await Task.Delay(2000); // temporary
+
+            loadTime.Stop();
+            activeProjectPath = path;
+            Console.WriteLine($"\n\nLoaded!");
+            Console.WriteLine($"Loaded {assetCount} assets");
+            Console.WriteLine($"Took {loadTime.Elapsed.Minutes} minutes and {(loadTime.Elapsed.Seconds)} seconds");
         }
 
         /// <summary>
@@ -493,7 +548,7 @@ namespace Limeko
                 {
                     Console.WriteLine("Limeko-Engine  Copyright (C) 2026  lunark");
                     Console.WriteLine("This program comes with ABSOLUTELY NO WARRANTY.");
-                    Console.WriteLine("This is free software, and you are welcome to redistribute it");
+                    Console.WriteLine("This is free software, and you are welcome to redistribute it.");
                     Console.WriteLine("under certain conditions. Press F9 to learn more.");
                 }
 
