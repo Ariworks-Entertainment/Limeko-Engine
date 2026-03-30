@@ -632,8 +632,8 @@ namespace Limeko
         public static List<string> projects = new();
 
 
-        private static byte[] newProjectName = new byte[64];
-        private static byte[] newProjectDeveloper = new byte[32];
+        private static string newProjectName = "";
+        private static string newProjectDeveloper = "";
 
         private static bool working = false;
         private static bool projectMenu = true;
@@ -650,7 +650,7 @@ namespace Limeko
 
             BeginTheme();
 
-            if(projectMenu)
+            if(projectMenu && !isProjectOpen)
             {
                 ImGui.SetNextWindowPos(center, ImGuiCond.Always, new System.Numerics.Vector2(0.5f, 0.5f));
                 ImGui.Begin("Projects", ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoTitleBar);
@@ -685,7 +685,7 @@ namespace Limeko
 
                 ImGui.End();
             }
-            else if(createProjectMenu)
+            else if(createProjectMenu && !isProjectOpen)
             {
                 ImGui.SetNextWindowPos(center, ImGuiCond.Always, new System.Numerics.Vector2(0.5f, 0.5f));
                 ImGui.Begin("Create new Project", ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoTitleBar);
@@ -699,17 +699,17 @@ namespace Limeko
                 ImGui.Dummy(new System.Numerics.Vector2(0, 6));
 
                 ImGui.Text("Project Title");
-                ImGui.InputText(" ", newProjectName, (uint)newProjectName.Length, ImGuiInputTextFlags.AutoSelectAll);
+                ImGui.InputTextWithHint(" ", "New Project", ref newProjectName, (uint)64, ImGuiInputTextFlags.AutoSelectAll);
                 ImGui.SetItemTooltip("This will be the name of your Project, and will appear on built versions of it. You can always change this later.");
 
                 ImGui.Dummy(new System.Numerics.Vector2(0, 4));
 
                 ImGui.Text("Project Developer");
-                ImGui.InputText("## ", newProjectDeveloper, (uint)newProjectDeveloper.Length, ImGuiInputTextFlags.AutoSelectAll);
+                ImGui.InputTextWithHint("## ", "ProDev0303", ref newProjectDeveloper, (uint)32, ImGuiInputTextFlags.AutoSelectAll);
                 ImGui.SetItemTooltip("This won't have any big effect aside from labelling. You can always change this later.");
 
 
-                string typed = System.Text.Encoding.UTF8.GetString(newProjectName).TrimEnd('\0');
+                string typed = newProjectName.Trim();
 
                 string fullPath = Path.Combine(defaultProjectPath, typed);
                 bool pathExists = Directory.Exists(fullPath);
@@ -722,6 +722,7 @@ namespace Limeko
                         working = true;
                         projectMenu = false;
 
+                        Console.WriteLine($"creating project with name '{typed}'");
                         CreateProject(typed).Wait(); // create project...
                         LoadProject(Path.Combine(defaultProjectPath, typed)).Wait(); // then, load it
 
@@ -744,7 +745,10 @@ namespace Limeko
 
                 ImGui.End();
             }
-
+            else if(isProjectOpen)
+            {
+                // Editor UI
+            }
             ImGui.PopStyleColor(41);
         }
 
@@ -760,20 +764,17 @@ namespace Limeko
 
             ImGui.CreateContext();
 
-            Array.Clear(newProjectName, 0, newProjectName.Length);
-            byte[] preset = System.Text.Encoding.UTF8.GetBytes("New Project");
-            Array.Copy(preset, newProjectName, preset.Length);
-
-            Array.Clear(newProjectDeveloper, 0, newProjectDeveloper.Length);
-            preset = System.Text.Encoding.UTF8.GetBytes("ProDev0303");
-            Array.Copy(preset, newProjectDeveloper, preset.Length);
-
 
             string programData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
             string dP = Path.Combine(programData, "Limeko\\Projects");
             if (!Directory.Exists(dP)) Directory.CreateDirectory(dP);
             defaultProjectPath = dP;
 
+            RefreshProjectList();
+        }
+
+        private static void RefreshProjectList()
+        {
             projects = Directory.GetDirectories(defaultProjectPath).ToList();
         }
 
@@ -864,6 +865,7 @@ namespace Limeko
         /// <param name="path"></param>
         public static async Task LoadProject(string path)
         {
+            RefreshProjectList();
             if(!projects.Contains(path)) return;
             Console.WriteLine($"Loading {path.Split("\\").Last()}...");
             Stopwatch loadTime = new Stopwatch();
@@ -875,6 +877,8 @@ namespace Limeko
 
             loadTime.Stop();
             activeProjectPath = path;
+            isProjectOpen = true;
+
             Console.WriteLine($"\n\nLoaded!");
             Console.WriteLine($"Loaded {assetCount} assets");
             Console.WriteLine($"Took {loadTime.Elapsed.Minutes} minutes and {(loadTime.Elapsed.Seconds)} seconds");
@@ -882,24 +886,50 @@ namespace Limeko
 
         public static async Task CreateProject(string name)
         {
-            string newProjectPath = Path.Combine(defaultProjectPath, name);
-            if (Directory.Exists(newProjectPath))
+            string trimmed = name.Trim();
+            string newProjectPath = Path.Combine(defaultProjectPath, trimmed);
+            if(Directory.Exists(newProjectPath))
             {
                 // has yet to be updated to use ImGUI.
                 Console.WriteLine("A project with that name already exists. Load it?");
-                Console.Write("[y/n]: "); if(Console.ReadLine().Trim().ToLower() == "y")
+                Console.Write("[y/n]: ");
+                if(Console.ReadLine().Trim().ToLower() == "y")
                 {
                     await LoadProject(newProjectPath);
                     return;
                 }
                 return;
             }
+            Console.WriteLine($"Creating parent directory for {trimmed}...");
             Directory.CreateDirectory(newProjectPath);
+
+
+            Console.WriteLine("Creating sub-directories...");
+
+            string gitIgnore = $".editor/\r\nbin/\r\nobj/\r\n.vs/\r\n.idea/\r\n*.user\r\n.DS_Store\r\nThumbs.db";
+            File.WriteAllText(Path.Combine(newProjectPath, ".gitignore"), gitIgnore);
+
+            DirectoryInfo eInf = Directory.CreateDirectory(Path.Combine(newProjectPath, ".editor"));
+            eInf.Attributes = FileAttributes.Hidden;
+
+            DirectoryInfo assetsInf = Directory.CreateDirectory(Path.Combine(newProjectPath, "Assets"));
+
+            DirectoryInfo assLev = Directory.CreateDirectory(Path.Combine(assetsInf.FullName, "Levels"));
+            Directory.CreateDirectory(Path.Combine(assetsInf.FullName, "Materials"));
+            Directory.CreateDirectory(Path.Combine(assetsInf.FullName, "Models"));
+            Directory.CreateDirectory(Path.Combine(assetsInf.FullName, "Scripts"));
+            Directory.CreateDirectory(Path.Combine(assetsInf.FullName, "Settings"));
+
+
+            Console.WriteLine("Creating default Assets...");
+
+            File.Create(Path.Combine(assLev.FullName, "level0.level"));
+
 
             // [create subdirectories, default assets, etc.]
             // TODO: finish this or whatever
 
-            Console.WriteLine($"Created project '{name}' at {newProjectPath}");
+            Console.WriteLine($"Created project '{trimmed}' at {newProjectPath}");
         }
 
         /// <summary>
