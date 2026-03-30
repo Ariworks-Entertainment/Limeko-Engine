@@ -33,7 +33,8 @@
               "RelativeToolTip": "Limeko\\Limeko.csproj",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
               "WhenOpened": "2026-03-11T03:12:23.151Z",
-              "IsPinned": true
+              "IsPinned": true,
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -43,7 +44,7 @@
               "RelativeDocumentMoniker": "Limeko\\Program.cs",
               "ToolTip": "C:\\Users\\Violet\\Documents\\GitHub\\Limeko-Engine\\Limeko\\Limeko\\Program.cs",
               "RelativeToolTip": "Limeko\\Program.cs",
-              "ViewState": "AgIAAGACAAAAAAAAAAA7wJMCAABYAAAAAAAAAA==",
+              "ViewState": "AgIAAJgAAAAAAAAAAAAjwJwAAABDAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-03-11T03:12:23.246Z",
               "IsPinned": true,
@@ -65,7 +66,6 @@
               "RelativeDocumentMoniker": "..\\..\\..\\..\\..\\Nicole\\AppData\\Local\\Limeko\\Projects\\TestProject\\level1.json",
               "ToolTip": "C:\\Users\\Nicole\\AppData\\Local\\Limeko\\Projects\\TestProject\\level1.json",
               "RelativeToolTip": "..\\..\\..\\..\\..\\Nicole\\AppData\\Local\\Limeko\\Projects\\TestProject\\level1.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
               "WhenOpened": "2026-03-28T18:02:48.168Z"
             }

@@ -92,3 +92,9 @@ C:\Users\Violet\Documents\GitHub\Limeko-Engine\Limeko\Limeko\bin\Debug\net8.0-wi
 C:\Users\Violet\Documents\GitHub\Limeko-Engine\Limeko\Limeko\bin\Debug\net8.0-windows\Avalonia.Remote.Protocol.dll
 C:\Users\Violet\Documents\GitHub\Limeko-Engine\Limeko\Limeko\bin\Debug\net8.0-windows\MicroCom.Runtime.dll
 C:\Users\Violet\Documents\GitHub\Limeko-Engine\Limeko\Limeko\obj\Debug\net8.0-windows\Avalonia\Resources.Inputs.cache
+C:\Users\Violet\Documents\GitHub\Limeko-Engine\Limeko\Limeko\bin\Debug\net8.0-windows\ImGui.NET.dll
+C:\Users\Violet\Documents\GitHub\Limeko-Engine\Limeko\Limeko\bin\Debug\net8.0-windows\runtimes\linux-x64\native\libcimgui.so
+C:\Users\Violet\Documents\GitHub\Limeko-Engine\Limeko\Limeko\bin\Debug\net8.0-windows\runtimes\osx\native\libcimgui.dylib
+C:\Users\Violet\Documents\GitHub\Limeko-Engine\Limeko\Limeko\bin\Debug\net8.0-windows\runtimes\win-arm64\native\cimgui.dll
+C:\Users\Violet\Documents\GitHub\Limeko-Engine\Limeko\Limeko\bin\Debug\net8.0-windows\runtimes\win-x64\native\cimgui.dll
+C:\Users\Violet\Documents\GitHub\Limeko-Engine\Limeko\Limeko\bin\Debug\net8.0-windows\runtimes\win-x86\native\cimgui.dll

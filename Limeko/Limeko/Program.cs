@@ -1,5 +1,7 @@
 ﻿using Avalonia;
 using BepuPhysics.Collidables;
+using ImGuiNET;
+using ImGuiTest;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
@@ -17,6 +19,9 @@ namespace Limeko
         /// The static instance of this program's active window.
         /// </summary>
         public static Window WindowInstance { get; private set; }
+
+        public static ImGuiController? ImGuiController = null;
+
 
         public static void Main()
         {
@@ -75,6 +80,9 @@ namespace Limeko
                 // sizing
                 WindowSize = new Vector2(Size.X, Size.Y);
 
+                // create ImGUI Controller
+                ImGuiController = new ImGuiController(this);
+
                 // general configuration
                 Rendering.ConfigureOpenGL();
 
@@ -101,12 +109,14 @@ namespace Limeko
                 Console.WriteLine($"| Found {Editor.projects.Count} Projects:");
                 foreach(string project in Editor.projects) Console.WriteLine($"| > {project.Split("\\").Last()}");
                 Console.WriteLine("");
+                this.IsVisible = true;
 
-                Console.WriteLine("Use '-c (Project-Name)' to Create a new Project.");
-                Console.Write("Load Project: ");
-                string projectToLoad = Console.ReadLine(); // <-- TEMPORARY
+                // Console.WriteLine("Use '-c (Project-Name)' to Create a new Project.");
+                // Console.Write("Load Project: ");
+                // string projectToLoad = Console.ReadLine(); // <-- TEMPORARY
                 // eventually replace this code with logic for Dear ImGUI stuff.
 
+                /*
                 if(projectToLoad.Contains("-c"))
                 {
                     string newProjectName = projectToLoad.Replace("-c", "").Trim();
@@ -127,6 +137,7 @@ namespace Limeko
                 Console.WriteLine("Fail");
                 this.Close();
                 this.Dispose();
+                */
             }
 
             protected override void OnUnload()
@@ -134,12 +145,23 @@ namespace Limeko
                 base.OnUnload();
                 // Dispose of all Shaders, free any assets, etc.
                 // _shader.Dispose();
+                ImGuiController.Dispose();
+            }
+
+            protected override void OnTextInput(TextInputEventArgs e)
+            {
+                base.OnTextInput(e);
+                ImGuiController.PressChar((char)e.Unicode);
             }
 
             protected override void OnUpdateFrame(FrameEventArgs e)
             {
                 base .OnUpdateFrame(e);
                 // Runs every frame.
+
+                ImGuiController.NewFrame(e.Time);
+
+                Editor.Update();
 
                 // Should only execute during runtime.
                 /*
@@ -153,6 +175,8 @@ namespace Limeko
                 base.OnResize(e);
                 GL.Viewport(0, 0, Size.X, Size.Y);
                 WindowSize = new Vector2(Size.X, Size.Y);
+                ImGuiController.WindowResized(Size.X, Size.Y);
+
                 Console.WriteLine($"Resized: {Size}");
             }
 
@@ -183,6 +207,11 @@ namespace Limeko
 
                 Rendering.Update(view, projection);
                 */
+
+                // Rendering.Update();
+
+                GL.Clear(ClearBufferMask.ColorBufferBit);
+                ImGuiController.Render();
 
                 SwapBuffers();
             }
@@ -602,6 +631,21 @@ namespace Limeko
 
         public static List<string> projects = new();
 
+
+        /// <summary>
+        /// Runs every frame while the Editor is open.
+        /// Handles Editor UI, Project management, etc.
+        /// </summary>
+        public static void Update()
+        {
+            ImGui.Begin("Sigma");
+
+            ImGui.Text($"Limeko {Core.Version}");
+
+            ImGui.End();
+        }
+
+
         /// <summary>
         /// Initializes core User and Engine data.
         /// Internal Method--Don't call directly!
@@ -681,6 +725,7 @@ namespace Limeko
                 // Dispose & Unload.
             }
         }
+
 
         public static class SplashScreen
         {
