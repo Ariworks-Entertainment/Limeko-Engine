@@ -723,8 +723,6 @@ namespace Limeko
                         CreateProject(typed).Wait(); // create project...
                         LoadProject(Path.Combine(defaultProjectPath, typed)).Wait(); // then, load it
 
-                        // load the editor:
-                        InitializeEditor().Wait();
                         working = false;
                         Console.WriteLine($"Created and loaded project {typed}!");
                     }
@@ -852,6 +850,12 @@ namespace Limeko
         /// </summary>
         public static async Task InitializeEditor()
         {
+            // Layouts aren't yet implemented.
+            Console.WriteLine("Initializing Editor...");
+            Console.WriteLine($"Layout: None");
+            Console.WriteLine($"Level: None");
+            Console.WriteLine($"Previous Session: Unknown");
+
             Console.WriteLine("Editor Unfinished. Consider it loaded!");
         }
 
@@ -869,6 +873,7 @@ namespace Limeko
             loadTime.Start();
 
             // load
+            Console.WriteLine("Parsing Assets...");
             int assetCount = 0;
             List<string> toLoad = GetAllDirectories(path).Result;
             toLoad.Add(path);
@@ -880,13 +885,17 @@ namespace Limeko
                     assetCount++;
                 }
             }
+            Console.WriteLine("Completed Parse.");
             // eventually actually load assets and whatnot
 
             loadTime.Stop();
             activeProjectPath = path;
             isProjectOpen = true;
 
-            Console.WriteLine($"\n\nCompleted!");
+            Console.WriteLine("");
+            InitializeEditor().Wait();
+
+            Console.WriteLine($"\nCompleted!");
             Console.WriteLine($"Loaded {assetCount} assets from {toLoad.Count} directories.");
             Console.WriteLine($"Took {loadTime.Elapsed.Minutes} minutes and {(loadTime.Elapsed.Seconds)}.{loadTime.Elapsed.Milliseconds} seconds");
         }
