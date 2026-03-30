@@ -173,11 +173,11 @@ namespace Limeko
             protected override void OnResize(ResizeEventArgs e)
             {
                 base.OnResize(e);
-                GL.Viewport(0, 0, Size.X, Size.Y);
-                WindowSize = new Vector2(Size.X, Size.Y);
-                ImGuiController.WindowResized(Size.X, Size.Y);
+                GL.Viewport(0, 0, e.Width, e.Height);
+                WindowSize = new Vector2(e.Width, e.Height);
+                ImGuiController.WindowResized(e.Width, e.Height);
 
-                Console.WriteLine($"Resized: {Size}");
+                Console.WriteLine($"Resized: {e.Width}x {e.Height}y");
             }
 
             protected override void OnRenderFrame(OpenTK.Windowing.Common.FrameEventArgs e)
@@ -632,17 +632,94 @@ namespace Limeko
         public static List<string> projects = new();
 
 
+        private static byte[] newProjectName = new byte[64];
+        private static byte[] newProjectDeveloper = new byte[32];
+
+        private static bool working = false;
+        private static bool projectMenu = true;
+        private static bool createProjectMenu = false;
+
         /// <summary>
         /// Runs every frame while the Editor is open.
         /// Handles Editor UI, Project management, etc.
         /// </summary>
         public static void Update()
         {
-            ImGui.Begin("Sigma");
+            var viewport = ImGui.GetMainViewport();
+            var center = viewport.GetCenter();
 
-            ImGui.Text($"Limeko {Core.Version}");
+            if(projectMenu)
+            {
+                ImGui.SetNextWindowPos(center, ImGuiCond.Always, new System.Numerics.Vector2(0.5f, 0.5f));
+                ImGui.Begin("Projects", ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoTitleBar);
+                ImGui.SetWindowSize(new System.Numerics.Vector2(682, 400));
 
-            ImGui.End();
+                if (ImGui.Button("Create New Project"))
+                {
+                    createProjectMenu = true;
+                    projectMenu = false;
+                }
+
+                ImGui.Dummy(new System.Numerics.Vector2(0, 7));
+                ImGui.SeparatorText("OR");
+                ImGui.Dummy(new System.Numerics.Vector2(0, 7));
+
+                ImGui.Text("Select a project to load:");
+                ImGui.BeginListBox(" ");
+                foreach (string project in projects)
+                {
+                    if(ImGui.Selectable(project.Split("\\").Last()))
+                    {
+                        working = true;
+                        LoadProject(project).Wait();
+                        projectMenu = false;
+                    }
+                }
+                ImGui.EndListBox();
+
+                ImGui.End();
+                return;
+            }
+            else if(createProjectMenu)
+            {
+                ImGui.SetNextWindowPos(center, ImGuiCond.Always, new System.Numerics.Vector2(0.5f, 0.5f));
+                ImGui.Begin("Create new Project", ImGuiWindowFlags.NoResize |  ImGuiWindowFlags.NoTitleBar);
+                ImGui.SetWindowSize(new System.Numerics.Vector2(500, 460));
+
+                ImGui.Text("# Project Info:");
+                ImGui.Separator();
+                ImGui.Text("Project Title");
+                ImGui.InputText(" ", newProjectName, (uint)newProjectName.Length, ImGuiInputTextFlags.AutoSelectAll);
+
+
+                ImGui.Text("Project Developer");
+                ImGui.SetItemTooltip("This is just for organizational purposes. It won't be used for anything else.");
+                ImGui.InputText("## ", newProjectDeveloper, (uint)newProjectDeveloper.Length, ImGuiInputTextFlags.AutoSelectAll);
+
+
+                string typed = System.Text.Encoding.UTF8.GetString(newProjectName).TrimEnd('\0');
+                if (ImGui.Button("Create"))
+                {
+                    if (!string.IsNullOrEmpty(typed))
+                    {
+                        working = true;
+                        projectMenu = false;
+
+                        CreateProject(typed).Wait(); // create project...
+                        LoadProject(Path.Combine(defaultProjectPath, typed)).Wait(); // then, load it
+
+                        // load the editor:
+                        InitializeEditor().Wait();
+                        working = false;
+                        Console.WriteLine($"Created and loaded project {typed}!");
+                    }
+                }
+                if(ImGui.Button("Back")) { createProjectMenu = false; projectMenu = true; }
+
+                ImGui.Text(Path.Combine(defaultProjectPath, typed));
+
+                ImGui.End();
+            }
         }
 
 
@@ -654,8 +731,17 @@ namespace Limeko
         {
             // Configure and Assign the Default Project Path.
             // Eventually support settings like a custom path.
+
+            Array.Clear(newProjectName, 0, newProjectName.Length);
+            byte[] preset = System.Text.Encoding.UTF8.GetBytes("New Project");
+            Array.Copy(preset, newProjectName, preset.Length);
+
+            Array.Clear(newProjectDeveloper, 0, newProjectDeveloper.Length);
+            preset = System.Text.Encoding.UTF8.GetBytes("ProDev0303");
+            Array.Copy(preset, newProjectDeveloper, preset.Length);
+
             string programData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            string dP = Path.Combine(programData, "Limeko/Projects");
+            string dP = Path.Combine(programData, "Limeko\\Projects");
             if (!Directory.Exists(dP)) Directory.CreateDirectory(dP);
             defaultProjectPath = dP;
 
@@ -667,9 +753,9 @@ namespace Limeko
         /// Initializes the core Editor logic.
         /// Internal Method--Don't call directly!
         /// </summary>
-        public static void InitializeEditor()
+        public static async Task InitializeEditor()
         {
-
+            Console.WriteLine("Editor Unfinished. Consider it loaded!");
         }
 
         /// <summary>
@@ -686,7 +772,7 @@ namespace Limeko
 
             // load
             int assetCount = 0;
-            await Task.Delay(2000); // temporary
+            // eventually actually load assets and whatnot
 
             loadTime.Stop();
             activeProjectPath = path;
@@ -700,6 +786,7 @@ namespace Limeko
             string newProjectPath = Path.Combine(defaultProjectPath, name);
             if (Directory.Exists(newProjectPath))
             {
+                // has yet to be updated to use ImGUI.
                 Console.WriteLine("A project with that name already exists. Load it?");
                 Console.Write("[y/n]: "); if(Console.ReadLine().Trim().ToLower() == "y")
                 {
@@ -709,8 +796,10 @@ namespace Limeko
                 return;
             }
             Directory.CreateDirectory(newProjectPath);
-            // create subdirectories, default assets, etc.
-            await Task.Delay(1000); // temporary
+
+            // [create subdirectories, default assets, etc.]
+            // TODO: finish this or whatever
+
             Console.WriteLine($"Created project '{name}' at {newProjectPath}");
         }
 
