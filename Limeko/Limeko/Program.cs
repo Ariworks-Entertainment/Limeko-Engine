@@ -18,7 +18,7 @@ namespace Limeko
         /// <summary>
         /// The static instance of this program's active window.
         /// </summary>
-        public static Window WindowInstance { get; private set; }
+        public static Window? WindowInstance { get; private set; }
 
         public static ImGuiController? ImGuiController = null;
 
@@ -85,9 +85,6 @@ namespace Limeko
 
                 // general configuration
                 Rendering.ConfigureOpenGL();
-
-                Console.WriteLine("> Setting background");
-                // slightly above black to avoid confusion
                 GL.ClearColor(0.56f, 1f, 0.56f, 1f);
 
                 Console.WriteLine("OpenGL Core Running.");
@@ -722,7 +719,7 @@ namespace Limeko
                         working = true;
                         projectMenu = false;
 
-                        Console.WriteLine($"creating project with name '{typed}'");
+                        Console.WriteLine($"Creating project with name '{typed}'");
                         CreateProject(typed).Wait(); // create project...
                         LoadProject(Path.Combine(defaultProjectPath, typed)).Wait(); // then, load it
 
@@ -873,15 +870,43 @@ namespace Limeko
 
             // load
             int assetCount = 0;
+            List<string> toLoad = GetAllDirectories(path).Result;
+            toLoad.Add(path);
+            foreach(var dir in toLoad)
+            {
+                foreach(var asset in Directory.GetFiles(dir))
+                {
+                    Console.WriteLine($"> {asset.Split("\\").Last()}");
+                    assetCount++;
+                }
+            }
             // eventually actually load assets and whatnot
 
             loadTime.Stop();
             activeProjectPath = path;
             isProjectOpen = true;
 
-            Console.WriteLine($"\n\nLoaded!");
-            Console.WriteLine($"Loaded {assetCount} assets");
-            Console.WriteLine($"Took {loadTime.Elapsed.Minutes} minutes and {(loadTime.Elapsed.Seconds)} seconds");
+            Console.WriteLine($"\n\nCompleted!");
+            Console.WriteLine($"Loaded {assetCount} assets from {toLoad.Count} directories.");
+            Console.WriteLine($"Took {loadTime.Elapsed.Minutes} minutes and {(loadTime.Elapsed.Seconds)}.{loadTime.Elapsed.Milliseconds} seconds");
+        }
+
+        private static async Task<List<string>> GetAllDirectories(string path)
+        {
+            List<string> returnDirectories = new();
+            foreach (var d in Directory.GetDirectories(path).ToList())
+            {
+                returnDirectories.Add(d);
+                var a = GetAllDirectories(d).Result;
+                if(a.Count > 0)
+                {
+                    foreach(var c in a)
+                    {
+                        returnDirectories.Add(c);
+                    }
+                }
+            }
+            return returnDirectories;
         }
 
         public static async Task CreateProject(string name)
