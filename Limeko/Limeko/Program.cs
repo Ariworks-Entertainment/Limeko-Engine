@@ -102,9 +102,18 @@ namespace Limeko
                 foreach(string project in Editor.projects) Console.WriteLine($"| > {project.Split("\\").Last()}");
                 Console.WriteLine("");
 
+                Console.WriteLine("Use '-c (Project-Name)' to Create a new Project.");
                 Console.Write("Load Project: ");
                 string projectToLoad = Console.ReadLine(); // <-- TEMPORARY
                 // eventually replace this code with logic for Dear ImGUI stuff.
+
+                if(projectToLoad.Contains("-c"))
+                {
+                    string newProjectName = projectToLoad.Replace("-c", "").Trim();
+                    await Editor.CreateProject(newProjectName);
+                    this.IsVisible = true;
+                    return;
+                }
 
                 foreach(string project in Editor.projects)
                 {
@@ -116,6 +125,8 @@ namespace Limeko
                     }
                 }
                 Console.WriteLine("Fail");
+                this.Close();
+                this.Dispose();
             }
 
             protected override void OnUnload()
@@ -157,7 +168,7 @@ namespace Limeko
 
                 // EDITOR VIEW CAMERA
                 /*
-                Vector3 front = new Vector3(
+                Vector3 editorCameraForward = new Vector3(
                     MathF.Cos(OpenTK.Mathematics.MathHelper.DegreesToRadians()) *
                     MathF.Cos(OpenTK.Mathematics.MathHelper.DegreesToRadians(_pitch)),
                     MathF.Sin(OpenTK.Mathematics.MathHelper.DegreesToRadians(_pitch)),
@@ -165,20 +176,13 @@ namespace Limeko
                     MathF.Cos(OpenTK.Mathematics.MathHelper.DegreesToRadians(_pitch))
                 );
 
-                Matrix4 view = Matrix4.LookAt(
-                    _cameraPosition,
-                    _cameraPosition + Vector3.Normalize(front),
-                    Vector3.UnitY);
+                Matrix4 view = Matrix4.LookAt(_cameraPosition, _cameraPosition + Vector3.Normalize(editorCameraForward), Vector3.UnitY);
 
-                Matrix4 projection = Matrix4.CreatePerspectiveFieldOfView(
-                    OpenTK.Mathematics.MathHelper.DegreesToRadians(70f),
-                    Size.X / (float)Size.Y,
-                    0.01f,
-                    100f);
+                Matrix4 projection = Matrix4.CreatePerspectiveFieldOfView(OpenTK.Mathematics.MathHelper.DegreesToRadians(70f), Size.X / (float)Size.Y, 0.01f, 100f);
+
+
+                Rendering.Update(view, projection);
                 */
-
-
-                Rendering.Update();
 
                 SwapBuffers();
             }
@@ -273,14 +277,18 @@ namespace Limeko
         /// <summary>
         /// Renders any Registered objects.
         /// </summary>
-        public static void Update()
+        public static void Update(Matrix4 view, Matrix4 projection)
         {
             // PER-OBJECT RENDERING
             foreach (var obj in registeredRenderers)
             {
+                if(obj.Mesh == null)
+                {
+                    Unregister(obj); continue;
+                }
+
                 // Still need to complete & add the Shader class.
-                /*
-                obj.Material.Bind();
+                // obj.Material.Bind();
 
                 var shader = obj.Material.Shader;
 
@@ -295,12 +303,11 @@ namespace Limeko
                 // optional but important
                 shader.SetFloat("uAmbient", 0.2f);
 
-                obj.Material.Shader.SetMatrix4("uModel", obj.GetModelMatrix());
+                obj.Material.Shader.SetMatrix4("uModel", obj.GetMatrix());
                 obj.Material.Shader.SetMatrix4("uView", view);
                 obj.Material.Shader.SetMatrix4("uProjection", projection);
 
-                obj.Mesh.Draw(Limeko.Core.WindowInstance._showDebug ? PrimitiveType.Lines : PrimitiveType.Triangles);
-                */
+                obj.Mesh.Draw(PrimitiveType.Triangles);
             }
         }
 
@@ -309,8 +316,25 @@ namespace Limeko
 
         public class Renderer
         {
-            public Material Material;
-            public Mesh Mesh;
+            public required EntitySystem.Entity Entity;
+            public Material Material = new();
+            public Mesh? Mesh;
+
+            public Vector3 PositionOffset;
+            public Quaternion RotationOffset;
+            public Vector3 ScaleOffset = Vector3.One;
+
+            public Matrix4 GetMatrix()
+            {
+                Vector3 rotatedOffset =
+                    Vector3.Transform(PositionOffset,
+                    Entity.Transform.Rotation);
+
+                return
+                    Matrix4.CreateScale(Entity.Transform.Scale * ScaleOffset) *
+                    Matrix4.CreateFromQuaternion(Entity.Transform.Rotation * RotationOffset) *
+                    Matrix4.CreateTranslation(Entity.Transform.Position + rotatedOffset);
+            }
         }
 
         /// <summary>
@@ -333,12 +357,150 @@ namespace Limeko
         /// </summary>
         public class Shader
         {
+            public int Handle { get; private set; }
 
+            public Shader(string vertPath, string fragPath)
+            {
+                string vertSource = File.ReadAllText(vertPath);
+                string fragSource = File.ReadAllText(fragPath);
+
+                // --- Vertex shader ---
+                int vertexShader = GL.CreateShader(ShaderType.VertexShader);
+                GL.ShaderSource(vertexShader, vertSource);
+                GL.CompileShader(vertexShader);
+                CheckShader(vertexShader);
+
+                // --- Fragment shader ---
+                int fragmentShader = GL.CreateShader(ShaderType.FragmentShader);
+                GL.ShaderSource(fragmentShader, fragSource);
+                GL.CompileShader(fragmentShader);
+                CheckShader(fragmentShader);
+
+                // --- Program ---
+                Handle = GL.CreateProgram();
+                GL.AttachShader(Handle, vertexShader);
+                GL.AttachShader(Handle, fragmentShader);
+                GL.LinkProgram(Handle);
+
+                GL.GetProgram(Handle, GetProgramParameterName.LinkStatus, out int success);
+                if (success == 0)
+                    throw new Exception(GL.GetProgramInfoLog(Handle));
+
+                GL.DeleteShader(vertexShader);
+                GL.DeleteShader(fragmentShader);
+            }
+
+            public void Use()
+            {
+                GL.UseProgram(Handle);
+            }
+
+            public void Dispose()
+            {
+                GL.DeleteProgram(Handle);
+            }
+
+            public void SetFloat(string name, float value)
+            {
+                int location = Uniforms.GetUniformLocation(name, Handle);
+                if (location != -1) GL.Uniform1(location, value);
+            }
+
+            public void SetColor(string name, Vector3 rgb)
+            {
+                int location = Uniforms.GetUniformLocation(name, Handle);
+                if (location != -1) GL.Uniform3(location, rgb);
+            }
+
+            public void SetMatrix4(string name, Matrix4 value)
+            {
+                int location = Uniforms.GetUniformLocation(name, Handle);
+                if (location != -1)
+                    GL.UniformMatrix4(location, false, ref value);
+            }
+
+            public void SetVector3(string name, Vector3 value)
+            {
+                int location = Uniforms.GetUniformLocation(name, Handle);
+                if (location != -1) GL.Uniform3(location, value);
+            }
+
+            public void SetInt(string name, int value)
+            {
+                GL.Uniform1(Uniforms.GetUniformLocation(name, Handle), value);
+            }
+
+            private void CheckShader(int shader)
+            {
+                GL.GetShader(shader, ShaderParameter.CompileStatus, out int success);
+                if (success == 0) throw new Exception(GL.GetShaderInfoLog(shader));
+            }
         }
 
         public class Mesh
         {
-            public required Vector3[] verticies;
+            int _vao;
+            int _vbo;
+            int _vertexCount;
+
+            public Mesh(float[] vertices)
+            {
+                _vertexCount = vertices.Length / 8;
+
+                _vao = GL.GenVertexArray();
+                _vbo = GL.GenBuffer();
+
+                GL.BindVertexArray(_vao);
+
+                GL.BindBuffer(BufferTarget.ArrayBuffer, _vbo);
+                GL.BufferData(BufferTarget.ArrayBuffer,
+                    vertices.Length * sizeof(float),
+                    vertices,
+                    BufferUsageHint.StaticDraw);
+
+                int stride = 8 * sizeof(float);
+
+                // position
+                GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float,
+                    false, stride, 0);
+                GL.EnableVertexAttribArray(0);
+
+                // normal
+                GL.VertexAttribPointer(1, 3, VertexAttribPointerType.Float,
+                    false, stride, 3 * sizeof(float));
+                GL.EnableVertexAttribArray(1);
+
+                // uv
+                GL.VertexAttribPointer(2, 2, VertexAttribPointerType.Float,
+                    false, stride, 6 * sizeof(float));
+                GL.EnableVertexAttribArray(2);
+            }
+
+            public void Draw(PrimitiveType type = PrimitiveType.Triangles)
+            {
+                GL.BindVertexArray(_vao);
+                GL.DrawArrays(type, 0, _vertexCount);
+            }
+        }
+
+        public static class Uniforms
+        {
+            static Dictionary<(int, string), int> _uniformCache = new();
+
+            public static int GetUniformLocation(string name, int program)
+            {
+                var key = (program, name);
+                if (_uniformCache.TryGetValue(key, out int loc)) return loc;
+
+                loc = GL.GetUniformLocation(program, name);
+                _uniformCache[key] = loc;
+                return loc;
+            }
+
+            public static void ClearUniformCache()
+            {
+                _uniformCache.Clear();
+            }
         }
     }
 
@@ -363,9 +525,9 @@ namespace Limeko
         /// </summary>
         public class Entity
         {
-            public required string name;
-            public required int id;
-            public Transform transform = new();
+            public required string Name;
+            public required int Identifier;
+            public Transform Transform = new();
         }
 
         /// <summary>
@@ -373,9 +535,9 @@ namespace Limeko
         /// </summary>
         public class Transform
         {
-            public Vector3 position;
-            public Quaternion rotation;
-            public Vector3 scale;
+            public Vector3 Position;
+            public Quaternion Rotation;
+            public Vector3 Scale;
         }
     }
 
@@ -489,6 +651,25 @@ namespace Limeko
             Console.WriteLine($"Took {loadTime.Elapsed.Minutes} minutes and {(loadTime.Elapsed.Seconds)} seconds");
         }
 
+        public static async Task CreateProject(string name)
+        {
+            string newProjectPath = Path.Combine(defaultProjectPath, name);
+            if (Directory.Exists(newProjectPath))
+            {
+                Console.WriteLine("A project with that name already exists. Load it?");
+                Console.Write("[y/n]: "); if(Console.ReadLine().Trim().ToLower() == "y")
+                {
+                    await LoadProject(newProjectPath);
+                    return;
+                }
+                return;
+            }
+            Directory.CreateDirectory(newProjectPath);
+            // create subdirectories, default assets, etc.
+            await Task.Delay(1000); // temporary
+            Console.WriteLine($"Created project '{name}' at {newProjectPath}");
+        }
+
         /// <summary>
         /// Unloads the currently open Project, given one is open.
         /// Internal Method--Don't call directly!
@@ -555,7 +736,6 @@ namespace Limeko
                 public static void PrintVersionInfo()
                 {
                     Console.WriteLine($"Version {Core.Version}");
-
                     switch(Core.Version.Split('-').Last())
                     {
                         case "alpha":
