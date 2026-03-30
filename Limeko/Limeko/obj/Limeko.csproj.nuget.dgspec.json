@@ -66,6 +66,10 @@
               "target": "Package",
               "version": "[1.91.6.1, )"
             },
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[13.0.4, )"
+            },
             "OpenTK": {
               "target": "Package",
               "version": "[4.9.4, )"

@@ -98,3 +98,4 @@ C:\Users\Violet\Documents\GitHub\Limeko-Engine\Limeko\Limeko\bin\Debug\net8.0-wi
 C:\Users\Violet\Documents\GitHub\Limeko-Engine\Limeko\Limeko\bin\Debug\net8.0-windows\runtimes\win-arm64\native\cimgui.dll
 C:\Users\Violet\Documents\GitHub\Limeko-Engine\Limeko\Limeko\bin\Debug\net8.0-windows\runtimes\win-x64\native\cimgui.dll
 C:\Users\Violet\Documents\GitHub\Limeko-Engine\Limeko\Limeko\bin\Debug\net8.0-windows\runtimes\win-x86\native\cimgui.dll
+C:\Users\Violet\Documents\GitHub\Limeko-Engine\Limeko\Limeko\bin\Debug\net8.0-windows\Newtonsoft.Json.dll

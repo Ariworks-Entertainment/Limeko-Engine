@@ -88,7 +88,7 @@ namespace Limeko
 
                 Console.WriteLine("> Setting background");
                 // slightly above black to avoid confusion
-                GL.ClearColor(0.04f, 0.04f, 0.04f, 1f);
+                GL.ClearColor(0.56f, 1f, 0.56f, 1f);
 
                 Console.WriteLine("OpenGL Core Running.");
 
@@ -648,11 +648,17 @@ namespace Limeko
             var viewport = ImGui.GetMainViewport();
             var center = viewport.GetCenter();
 
+            BeginTheme();
+
             if(projectMenu)
             {
                 ImGui.SetNextWindowPos(center, ImGuiCond.Always, new System.Numerics.Vector2(0.5f, 0.5f));
                 ImGui.Begin("Projects", ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoTitleBar);
                 ImGui.SetWindowSize(new System.Numerics.Vector2(682, 400));
+
+                ImGui.Text("Project Browser");
+                ImGui.Separator();
+                ImGui.Dummy(new System.Numerics.Vector2(0, 6));
 
                 if (ImGui.Button("Create New Project"))
                 {
@@ -660,9 +666,9 @@ namespace Limeko
                     projectMenu = false;
                 }
 
-                ImGui.Dummy(new System.Numerics.Vector2(0, 7));
+                ImGui.Dummy(new System.Numerics.Vector2(0, 6));
                 ImGui.SeparatorText("OR");
-                ImGui.Dummy(new System.Numerics.Vector2(0, 7));
+                ImGui.Dummy(new System.Numerics.Vector2(0, 6));
 
                 ImGui.Text("Select a project to load:");
                 ImGui.BeginListBox(" ");
@@ -678,29 +684,40 @@ namespace Limeko
                 ImGui.EndListBox();
 
                 ImGui.End();
-                return;
             }
             else if(createProjectMenu)
             {
                 ImGui.SetNextWindowPos(center, ImGuiCond.Always, new System.Numerics.Vector2(0.5f, 0.5f));
-                ImGui.Begin("Create new Project", ImGuiWindowFlags.NoResize |  ImGuiWindowFlags.NoTitleBar);
+                ImGui.Begin("Create new Project", ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoTitleBar);
                 ImGui.SetWindowSize(new System.Numerics.Vector2(500, 460));
 
-                ImGui.Text("# Project Info:");
+                ImGui.Text("Create new Project");
                 ImGui.Separator();
+                ImGui.Dummy(new System.Numerics.Vector2(0, 6));
+
+                ImGui.TextColored(new System.Numerics.Vector4(1f, 1f, 1f, 0.6f), "# Project Info:");
+                ImGui.Dummy(new System.Numerics.Vector2(0, 6));
+
                 ImGui.Text("Project Title");
                 ImGui.InputText(" ", newProjectName, (uint)newProjectName.Length, ImGuiInputTextFlags.AutoSelectAll);
+                ImGui.SetItemTooltip("This will be the name of your Project, and will appear on built versions of it. You can always change this later.");
 
+                ImGui.Dummy(new System.Numerics.Vector2(0, 4));
 
                 ImGui.Text("Project Developer");
-                ImGui.SetItemTooltip("This is just for organizational purposes. It won't be used for anything else.");
                 ImGui.InputText("## ", newProjectDeveloper, (uint)newProjectDeveloper.Length, ImGuiInputTextFlags.AutoSelectAll);
+                ImGui.SetItemTooltip("This won't have any big effect aside from labelling. You can always change this later.");
 
 
                 string typed = System.Text.Encoding.UTF8.GetString(newProjectName).TrimEnd('\0');
-                if (ImGui.Button("Create"))
+
+                string fullPath = Path.Combine(defaultProjectPath, typed);
+                bool pathExists = Directory.Exists(fullPath);
+
+                if(pathExists) ImGui.BeginDisabled();
+                if(ImGui.Button("Create"))
                 {
-                    if (!string.IsNullOrEmpty(typed))
+                    if(!string.IsNullOrEmpty(typed))
                     {
                         working = true;
                         projectMenu = false;
@@ -714,12 +731,21 @@ namespace Limeko
                         Console.WriteLine($"Created and loaded project {typed}!");
                     }
                 }
+                if(pathExists) ImGui.EndDisabled();
                 if(ImGui.Button("Back")) { createProjectMenu = false; projectMenu = true; }
 
-                ImGui.Text(Path.Combine(defaultProjectPath, typed));
+
+                System.Numerics.Vector4 pathTextColor = new System.Numerics.Vector4(1f, 1f, 1f, 1f); // white
+                if(!pathExists) pathTextColor = new System.Numerics.Vector4(0.2f, 1f, 0.2f, 1f); // green
+                else pathTextColor = new System.Numerics.Vector4(1f, 0.2f, 0.2f, 1f); // red
+
+                ImGui.TextColored(pathTextColor, fullPath);
+                if(pathExists) ImGui.TextColored(new System.Numerics.Vector4(1f, 1f, 1f, 0.4f), "A project with that name already exists.");
 
                 ImGui.End();
             }
+
+            ImGui.PopStyleColor(41);
         }
 
 
@@ -732,6 +758,8 @@ namespace Limeko
             // Configure and Assign the Default Project Path.
             // Eventually support settings like a custom path.
 
+            ImGui.CreateContext();
+
             Array.Clear(newProjectName, 0, newProjectName.Length);
             byte[] preset = System.Text.Encoding.UTF8.GetBytes("New Project");
             Array.Copy(preset, newProjectName, preset.Length);
@@ -740,12 +768,83 @@ namespace Limeko
             preset = System.Text.Encoding.UTF8.GetBytes("ProDev0303");
             Array.Copy(preset, newProjectDeveloper, preset.Length);
 
+
             string programData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
             string dP = Path.Combine(programData, "Limeko\\Projects");
             if (!Directory.Exists(dP)) Directory.CreateDirectory(dP);
             defaultProjectPath = dP;
 
             projects = Directory.GetDirectories(defaultProjectPath).ToList();
+        }
+
+        private static void BeginTheme()
+        {
+            // -- Backgrounds --
+            ImGui.PushStyleColor(ImGuiCol.WindowBg, (System.Numerics.Vector4)new Vector4(0.047f, 0.063f, 0.047f, 0.97f)); // dark lime tint
+            ImGui.PushStyleColor(ImGuiCol.ChildBg, (System.Numerics.Vector4)new Vector4(0.055f, 0.075f, 0.055f, 0.90f));
+            ImGui.PushStyleColor(ImGuiCol.PopupBg, (System.Numerics.Vector4)new Vector4(0.059f, 0.082f, 0.059f, 0.98f));
+
+            // -- Borders --
+            ImGui.PushStyleColor(ImGuiCol.Border, (System.Numerics.Vector4)new Vector4(0.204f, 0.757f, 0.451f, 0.25f)); // visible lime border
+            ImGui.PushStyleColor(ImGuiCol.BorderShadow, (System.Numerics.Vector4)new Vector4(0.000f, 0.000f, 0.000f, 0.00f));
+
+            // -- Frames --
+            ImGui.PushStyleColor(ImGuiCol.FrameBg, (System.Numerics.Vector4)new Vector4(0.071f, 0.110f, 0.071f, 0.85f));
+            ImGui.PushStyleColor(ImGuiCol.FrameBgHovered, (System.Numerics.Vector4)new Vector4(0.100f, 0.160f, 0.100f, 0.85f));
+            ImGui.PushStyleColor(ImGuiCol.FrameBgActive, (System.Numerics.Vector4)new Vector4(0.130f, 0.210f, 0.130f, 0.90f));
+
+            // -- Title bars --
+            ImGui.PushStyleColor(ImGuiCol.TitleBg, (System.Numerics.Vector4)new Vector4(0.039f, 0.055f, 0.039f, 1.00f));
+            ImGui.PushStyleColor(ImGuiCol.TitleBgActive, (System.Numerics.Vector4)new Vector4(0.118f, 0.380f, 0.200f, 1.00f)); // punchy lime
+            ImGui.PushStyleColor(ImGuiCol.TitleBgCollapsed, (System.Numerics.Vector4)new Vector4(0.039f, 0.055f, 0.039f, 0.70f));
+
+            // -- Scrollbar --
+            ImGui.PushStyleColor(ImGuiCol.ScrollbarBg, (System.Numerics.Vector4)new Vector4(0.039f, 0.055f, 0.039f, 0.00f));
+            ImGui.PushStyleColor(ImGuiCol.ScrollbarGrab, (System.Numerics.Vector4)new Vector4(0.204f, 0.757f, 0.451f, 0.55f));
+            ImGui.PushStyleColor(ImGuiCol.ScrollbarGrabHovered, (System.Numerics.Vector4)new Vector4(0.204f, 0.757f, 0.451f, 0.80f));
+            ImGui.PushStyleColor(ImGuiCol.ScrollbarGrabActive, (System.Numerics.Vector4)new Vector4(0.486f, 1.000f, 0.776f, 1.00f));
+
+            // -- Checkmark & Slider --
+            ImGui.PushStyleColor(ImGuiCol.CheckMark, (System.Numerics.Vector4)new Vector4(0.486f, 1.000f, 0.776f, 1.00f));
+            ImGui.PushStyleColor(ImGuiCol.SliderGrab, (System.Numerics.Vector4)new Vector4(0.204f, 0.757f, 0.451f, 1.00f));
+            ImGui.PushStyleColor(ImGuiCol.SliderGrabActive, (System.Numerics.Vector4)new Vector4(0.486f, 1.000f, 0.776f, 1.00f));
+
+            // -- Buttons --
+            ImGui.PushStyleColor(ImGuiCol.Button, (System.Numerics.Vector4)new Vector4(0.118f, 0.320f, 0.180f, 1.00f)); // proper lime green
+            ImGui.PushStyleColor(ImGuiCol.ButtonHovered, (System.Numerics.Vector4)new Vector4(0.204f, 0.757f, 0.451f, 0.75f));
+            ImGui.PushStyleColor(ImGuiCol.ButtonActive, (System.Numerics.Vector4)new Vector4(0.486f, 1.000f, 0.776f, 0.90f));
+
+            // -- Headers --
+            ImGui.PushStyleColor(ImGuiCol.Header, (System.Numerics.Vector4)new Vector4(0.204f, 0.757f, 0.451f, 0.25f));
+            ImGui.PushStyleColor(ImGuiCol.HeaderHovered, (System.Numerics.Vector4)new Vector4(0.204f, 0.757f, 0.451f, 0.45f));
+            ImGui.PushStyleColor(ImGuiCol.HeaderActive, (System.Numerics.Vector4)new Vector4(0.486f, 1.000f, 0.776f, 0.55f));
+
+            // -- Separator --
+            ImGui.PushStyleColor(ImGuiCol.Separator, (System.Numerics.Vector4)new Vector4(0.204f, 0.757f, 0.451f, 0.30f));
+            ImGui.PushStyleColor(ImGuiCol.SeparatorHovered, (System.Numerics.Vector4)new Vector4(0.204f, 0.757f, 0.451f, 0.70f));
+            ImGui.PushStyleColor(ImGuiCol.SeparatorActive, (System.Numerics.Vector4)new Vector4(0.486f, 1.000f, 0.776f, 1.00f));
+
+            // -- Resize Grip --
+            ImGui.PushStyleColor(ImGuiCol.ResizeGrip, (System.Numerics.Vector4)new Vector4(0.204f, 0.757f, 0.451f, 0.25f));
+            ImGui.PushStyleColor(ImGuiCol.ResizeGripHovered, (System.Numerics.Vector4)new Vector4(0.204f, 0.757f, 0.451f, 0.60f));
+            ImGui.PushStyleColor(ImGuiCol.ResizeGripActive, (System.Numerics.Vector4)new Vector4(0.486f, 1.000f, 0.776f, 0.90f));
+
+            // -- Tabs --
+            ImGui.PushStyleColor(ImGuiCol.Tab, (System.Numerics.Vector4)new Vector4(0.059f, 0.110f, 0.071f, 1.00f));
+            ImGui.PushStyleColor(ImGuiCol.TabHovered, (System.Numerics.Vector4)new Vector4(0.204f, 0.757f, 0.451f, 0.50f));
+            ImGui.PushStyleColor(ImGuiCol.TabSelected, (System.Numerics.Vector4)new Vector4(0.118f, 0.380f, 0.200f, 1.00f));
+            ImGui.PushStyleColor(ImGuiCol.TabDimmed, (System.Numerics.Vector4)new Vector4(0.039f, 0.075f, 0.047f, 1.00f));
+            ImGui.PushStyleColor(ImGuiCol.TabDimmedSelected, (System.Numerics.Vector4)new Vector4(0.071f, 0.200f, 0.110f, 1.00f));
+
+            // -- Text --
+            ImGui.PushStyleColor(ImGuiCol.Text, (System.Numerics.Vector4)new Vector4(0.878f, 1.000f, 0.925f, 1.00f)); // soft mint white
+            ImGui.PushStyleColor(ImGuiCol.TextDisabled, (System.Numerics.Vector4)new Vector4(0.486f, 1.000f, 0.776f, 0.40f)); // faded mint
+            ImGui.PushStyleColor(ImGuiCol.TextSelectedBg, (System.Numerics.Vector4)new Vector4(0.204f, 0.757f, 0.451f, 0.35f));
+
+            // -- Misc --
+            ImGui.PushStyleColor(ImGuiCol.DragDropTarget, (System.Numerics.Vector4)new Vector4(0.486f, 1.000f, 0.776f, 0.90f));
+            ImGui.PushStyleColor(ImGuiCol.NavWindowingHighlight, (System.Numerics.Vector4)new Vector4(0.486f, 1.000f, 0.776f, 1.00f));
+            ImGui.PushStyleColor(ImGuiCol.ModalWindowDimBg, (System.Numerics.Vector4)new Vector4(0.000f, 0.000f, 0.000f, 0.50f));
         }
 
 
