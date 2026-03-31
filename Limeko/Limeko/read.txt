@@ -1,0 +1,42 @@
+# Important
+
+Limeko will always stay open source, and will never be a paid program.
+My goal out of Limeko isn't money, but a fast, reliable way to make games.
+
+Want to support? Great, just donate.
+Don't? Doesn't matter, you still get the same features as everyone else.
+
+I may be fifteen, I may be a random girl on the internet, but shareholders don't
+have a say in what I make of my own creations, and they never will.
+
+
+# Future & Plans
+
+Obviously as of right now everything is in Program.cs.
+Eventually, they'll be in separate classes, like "Editor.cs" or "Renderer.cs".
+I'm just working on getting it functional before I make it pretty.
+
+
+# Community
+
+Post-launch, I'll make updates, I'll add features, and I'll keep it working for as long
+as I can.
+
+However, I'm one person, and I'm sure there are people who know more than me.
+So, that's why the license is GNU Lesser;
+
+Make your own modifications, add features, improve stuff, and if you think it's
+ready enough to push to the real thing, send a push request--We're happy to consider.
+
+Limeko is *not* a giant corporation-driven program. It's a community-driven tool made
+as a love-letter to all of your favorite engines--Source, Source 2, Unity, Unreal, S&box--we
+love it all. (Even if Unity can be finnicky, and Unreal's performance can be iffy.)
+
+
+# Final Notes
+
+While Limeko is still in development, and isn't even slightly ready for games to be made,
+love is still poured into it daily, and I plan to work on it for as long as I can.
+
+As for 'why', Limeko was going to be Ariworks' in-house engine. Then I figured, "Why not hit
+two birds with one stone?" Well, here comes the stone.
