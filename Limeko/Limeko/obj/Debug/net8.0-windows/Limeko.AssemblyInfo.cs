@@ -11,11 +11,11 @@
 using System;
 using System.Reflection;
 
-[assembly: System.Reflection.AssemblyMetadataAttribute("BuildDate", "2026-03-31T16:45:58Z")]
+[assembly: System.Reflection.AssemblyMetadataAttribute("BuildDate", "2026-03-31T21:10:43Z")]
 [assembly: System.Reflection.AssemblyCompanyAttribute("Limeko")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a985a840ade17423ecb852d33407cb86e2b831dd")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c5e69d2ea8ab701676e23519008a736f657af343")]
 [assembly: System.Reflection.AssemblyProductAttribute("Limeko")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Limeko")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
