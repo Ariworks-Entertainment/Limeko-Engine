@@ -852,9 +852,11 @@ namespace Limeko
         {
             // Layouts aren't yet implemented.
             Console.WriteLine("Initializing Editor...");
-            Console.WriteLine($"Layout: None");
-            Console.WriteLine($"Level: None");
-            Console.WriteLine($"Previous Session: Unknown");
+            Console.WriteLine("----------------------");
+            Console.WriteLine($"> Layout: None");
+            Console.WriteLine($"> Level: None");
+            Console.WriteLine($"> Previous Session: Unknown");
+            Console.WriteLine("----------------------\n");
 
             Console.WriteLine("Editor Unfinished. Consider it loaded!");
         }
@@ -868,7 +870,7 @@ namespace Limeko
         {
             RefreshProjectList();
             if(!projects.Contains(path)) return;
-            Console.WriteLine($"Loading {path.Split("\\").Last()}...");
+            Console.WriteLine($"\nLoading {path.Split("\\").Last()}...");
             Stopwatch loadTime = new Stopwatch();
             loadTime.Start();
 
