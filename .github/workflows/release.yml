@@ -16,11 +16,8 @@ jobs:
             rid: linux-x64
             artifact: limeko-linux
           - os: macos-latest
-            rid: osx-arm64
-            artifact: limeko-macos-arm
-          - os: macos-12
             rid: osx-x64
-            artifact: limeko-macos-intel
+            artifact: limeko-macos
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
@@ -60,8 +57,7 @@ jobs:
           cd artifacts
           zip -r limeko-windows.zip limeko-windows/
           zip -r limeko-linux.zip limeko-linux/
-          zip -r limeko-macos-arm.zip limeko-macos-arm/
-          zip -r limeko-macos-intel.zip limeko-macos-intel/
+          zip -r limeko-macos.zip limeko-macos/
       - name: Create release
         uses: softprops/action-gh-release@v2
         with:
@@ -70,14 +66,12 @@ jobs:
           body: |
             Automated release from commit ${{ github.sha }}.
             **Downloads:**
-            - `limeko-windows.zip` — Windows x64
-            - `limeko-linux.zip` — Linux x64
-            - `limeko-macos-arm.zip` — macOS ARM64 (Apple Silicon)
-            - `limeko-macos-intel.zip` — macOS x64 (Intel)
+            - limeko-windows.zip — Windows x64
+            - limeko-linux.zip — Linux x64
+            - limeko-macos.zip — macOS x64
           files: |
             artifacts/limeko-windows.zip
             artifacts/limeko-linux.zip
-            artifacts/limeko-macos-arm.zip
-            artifacts/limeko-macos-intel.zip
+            artifacts/limeko-macos.zip
           draft: false
           prerelease: false
