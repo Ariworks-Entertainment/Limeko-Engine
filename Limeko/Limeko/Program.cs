@@ -664,18 +664,19 @@ namespace Limeko
                 ImGui.Dummy(new System.Numerics.Vector2(0, 6));
 
                 ImGui.Text("Select a project to load:");
-                ImGui.BeginListBox(" ");
-                foreach (string project in projects)
+                if(ImGui.BeginListBox(" "))
                 {
-                    if(ImGui.Selectable(project.Split("\\").Last()))
+                    foreach(string project in projects)
                     {
-                        working = true;
-                        LoadProject(project).Wait();
-                        projectMenu = false;
+                        if(ImGui.Selectable(project.Split("\\").Last()))
+                        {
+                            working = true;
+                            LoadProject(project).Wait();
+                            projectMenu = false;
+                        }
                     }
+                    ImGui.EndListBox();
                 }
-                ImGui.EndListBox();
-
                 ImGui.End();
             }
             else if(createProjectMenu && !isProjectOpen)
