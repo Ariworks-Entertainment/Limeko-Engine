@@ -40,7 +40,7 @@ Bepu was etched into Limeko from as early as the first week of development, mean
 You'll get the best experience Limeko can offer.
 
 # Roadmap
-(<i>If you'd like to suggest features, send them [here](https://github.com/ariworks-entertainment/Limeko-Engine/issues)!</i>)
+(<i>If you'd like to suggest features, send them [here](https://github.com/Ariworks-Entertainment/Limeko-Engine/discussions/categories/ideas)!</i>)
 
 ### In Progress
 - Render Pipeline Framework
