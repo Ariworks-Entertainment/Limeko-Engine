@@ -34,7 +34,7 @@ jobs:
 
       - name: Publish
         run: >
-          dotnet publish Limeko/Limeko.csproj
+          dotnet publish Limeko-Engine/Limeko/Limeko/Limeko.csproj
           -c Release
           -r ${{ matrix.rid }}
           --self-contained true
