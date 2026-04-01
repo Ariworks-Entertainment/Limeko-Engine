@@ -71,17 +71,13 @@ namespace Limeko
 
                 // Slowly learning from my mistakes.
 
-                // start internal stuff.
-                Editor.InitializeCore();
-
 
                 Console.WriteLine("<--> Starting Editor (Internal) <-->");
 
-                // sizing
                 WindowSize = new Vector2(Size.X, Size.Y);
+                ImGuiController = new ImGuiController(this); // create ImGUI Controller
 
-                // create ImGUI Controller
-                ImGuiController = new ImGuiController(this);
+                Editor.InitializeCore(); // start internal stuff.
 
                 // general configuration
                 Rendering.ConfigureOpenGL();
@@ -756,9 +752,6 @@ namespace Limeko
         {
             // Configure and Assign the Default Project Path.
             // Eventually support settings like a custom path.
-
-            ImGui.CreateContext();
-
 
             string programData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
             string dP = Path.Combine(programData, "Limeko\\Projects");
