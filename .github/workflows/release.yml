@@ -1,10 +1,8 @@
 name: Release
-
 on:
   push:
     branches:
       - release
-
 jobs:
   build:
     name: Build (${{ matrix.os }})
@@ -18,20 +16,19 @@ jobs:
             rid: linux-x64
             artifact: limeko-linux
           - os: macos-latest
+            rid: osx-arm64
+            artifact: limeko-macos-arm
+          - os: macos-13
             rid: osx-x64
-            artifact: limeko-macos
-
+            artifact: limeko-macos-intel
     runs-on: ${{ matrix.os }}
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
-
       - name: Publish
         run: >
           dotnet publish Limeko/Limeko/Limeko.csproj
@@ -40,37 +37,31 @@ jobs:
           --self-contained true
           -p:PublishSingleFile=true
           -o ./publish/${{ matrix.rid }}
-
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.artifact }}
           path: ./publish/${{ matrix.rid }}/
-
   release:
     name: Create GitHub Release
     needs: build
     runs-on: ubuntu-latest
-
     permissions:
       contents: write
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
       - name: Download all artifacts
         uses: actions/download-artifact@v4
         with:
           path: ./artifacts
-
       - name: Zip build outputs
         run: |
           cd artifacts
           zip -r limeko-windows.zip limeko-windows/
           zip -r limeko-linux.zip limeko-linux/
-          zip -r limeko-macos.zip limeko-macos/
-
+          zip -r limeko-macos-arm.zip limeko-macos-arm/
+          zip -r limeko-macos-intel.zip limeko-macos-intel/
       - name: Create release
         uses: softprops/action-gh-release@v2
         with:
@@ -78,14 +69,15 @@ jobs:
           name: "Limeko — ${{ github.sha }}"
           body: |
             Automated release from commit ${{ github.sha }}.
-
             **Downloads:**
             - `limeko-windows.zip` — Windows x64
             - `limeko-linux.zip` — Linux x64
-            - `limeko-macos.zip` — macOS x64
+            - `limeko-macos-arm.zip` — macOS ARM64 (Apple Silicon)
+            - `limeko-macos-intel.zip` — macOS x64 (Intel)
           files: |
             artifacts/limeko-windows.zip
             artifacts/limeko-linux.zip
-            artifacts/limeko-macos.zip
+            artifacts/limeko-macos-arm.zip
+            artifacts/limeko-macos-intel.zip
           draft: false
           prerelease: false
