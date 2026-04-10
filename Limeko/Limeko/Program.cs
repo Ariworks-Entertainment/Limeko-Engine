@@ -13,7 +13,7 @@ namespace Limeko
 {
     public class Core
     {
-        public static string Version = "dev-0.0.0-alpha";
+        public static string Version = "0.1.0-alpha+dev";
 
         /// <summary>
         /// The static instance of this program's active window.
@@ -27,7 +27,7 @@ namespace Limeko
         {
             // Editor.SplashScreen.Show();
 
-            Console.Title = "Limeko Console";
+            Console.Title = "Limeko Debugger";
             WindowInstance = new Window();
             WindowInstance.Run();
         }
@@ -999,40 +999,65 @@ namespace Limeko
 
             public static class Misc
             {
-                public static void PrintLimeko(bool spacer)
+                public static void PrintLimeko(bool spacer = false)
                 {
-                    if (spacer) Console.WriteLine("");
-                    Console.WriteLine("                                                           .-'''-.     ");
-                    Console.WriteLine(".---.                                                     '   _    \\   ");
-                    Console.WriteLine("|   |.--. __  __   ___         __.....__          .     /   /` '.   \\  ");
-                    Console.WriteLine("|   ||__||  |/  `.'   `.   .-''         '.      .'|    .   |     \\  '  ");
-                    Console.WriteLine("|   |.--.|   .-.  .-.   ' /     .-''\"'-.  `.  .'  |    |   '      |  ' ");
-                    Console.WriteLine("|   ||  ||  |  |  |  |  |/     /________\\   \\<    |    \\    \\     / /  ");
-                    Console.WriteLine("|   ||  ||  |  |  |  |  ||                  | |   | ____`.   ` ..' /   ");
-                    Console.WriteLine("|   ||  ||  |  |  |  |  |\\    .-------------' |   | \\ .'   '-...-'`    ");
-                    Console.WriteLine("|   ||  ||  |  |  |  |  | \\    '-.____...---. |   |/  .                ");
-                    Console.WriteLine("|   ||__||__|  |__|  |__|  `.             .'  |    /\\  \\               ");
-                    Console.WriteLine("'---'                        `''-...... -'    |   |  \\  \\              ");
-                    Console.WriteLine("                                              '    \\  \\  \\             ");
-                    Console.WriteLine("                                             '------'  '---'           ");
-                    if (spacer) Console.WriteLine("");
+                    string[] art =
+                    [
+                        "                                                           .-'''-.     ",
+                        ".---.                                                     '   _    \\   ",
+                        "|   |.--. __  __   ___         __.....__          .     /   /` '.   \\  ",
+                        "|   ||__||  |/  `.'   `.   .-''         '.      .'|    .   |     \\  '  ",
+                        "|   |.--.|   .-.  .-.   ' /     .-''\"'-.  `.  .'  |    |   '      |  ' ",
+                        "|   ||  ||  |  |  |  |  |/     /________\\   \\<    |    \\    \\     / /  ",
+                        "|   ||  ||  |  |  |  |  ||                  | |   | ____`.   ` ..' /   ",
+                        "|   ||  ||  |  |  |  |  |\\    .-------------' |   | \\ .'   '-...-'`    ",
+                        "|   ||  ||  |  |  |  |  | \\    '-.____...---. |   |/  .                ",
+                        "|   ||__||__|  |__|  |__|  `.             .'  |    /\\  \\               ",
+                        "'---'                        `''-...... -'    |   |  \\  \\              ",
+                        "                                              '    \\  \\  \\             ",
+                        "                                             '------'  '---'           ",
+                    ];
+
+                    if (spacer) Console.WriteLine();
+                    foreach (var line in art) Console.WriteLine(line);
+                    if (spacer) Console.WriteLine();
                 }
 
                 public static void PrintLicenseDisclaimer()
                 {
-                    Console.WriteLine("Limeko-Engine  Copyright (C) 2026  lunark");
-                    Console.WriteLine("This program comes with ABSOLUTELY NO WARRANTY.");
-                    Console.WriteLine("This is free software, and you are welcome to redistribute it.");
-                    Console.WriteLine("under certain conditions. Press F9 to learn more.");
+                    Console.WriteLine("┌─────────────────────────────────────────────────────────────────┐");
+                    Console.WriteLine("│         Limeko Engine  •  Copyright (C) 2026  •  lunark           │");
+                    Console.WriteLine("├─────────────────────────────────────────────────────────────────┤");
+                    Console.WriteLine("│   This program comes with ABSOLUTELY NO WARRANTY; for details   │");
+                    Console.WriteLine("│   press F9. This is free software licensed under the GNU Lesser │");
+                    Console.WriteLine("│   General Public License v3. You are welcome to redistribute it │");
+                    Console.WriteLine("│    under certain conditions. Press F9 for the GPL and LGPL v3   │");
+                    Console.WriteLine("│                         license details.                        │");
+                    Console.WriteLine("└─────────────────────────────────────────────────────────────────┘");
                 }
 
                 public static void PrintVersionInfo()
                 {
+                    string b = Core.Version;
+                    string semVer = b.Split('-').First();
+                    string stage = b.Split("-").Last().Split("+").First();
+                    List<string> additives = b.Split("+").ToList();
+                    additives.RemoveAt(0);
+
+                    Console.WriteLine($"semver: {semVer}");
+                    Console.WriteLine($"stage: {stage}");
+                    Console.WriteLine($"{additives.Count} additive(s):");
+                    foreach(string a in additives)
+                    {
+                        Console.WriteLine($"| > {a}");
+                    }
+
+                    return;
                     Console.WriteLine($"Version {Core.Version}");
                     switch(Core.Version.Split('-').Last())
                     {
                         case "alpha":
-                            Console.WriteLine("You are running an ALPHA version of Limeko. Don't expect a flawless experience.");
+                            Console.WriteLine($"You are running an ALPHA version of Limeko. Don't expect a flawless experience.");
                             break;
                         case "beta":
                             Console.WriteLine("You are running a BETA version of Limeko. Issues are to be expected.");
