@@ -1,7 +1,8 @@
-- Basic flow for Creating Projects
-- Saving Level data
-- Loading Level data
-- Editor Camera
-- Create experimental branch for testing Dear ImGUI integration
+- Basic flow for Creating Projects              <-- COMPLETE
+- Dear ImGui Integration                        <-- COMPLETE
+- Saving Level data                             <-- IN PROGRESS
+- Loading Level data                            <-- INCOMPLETE
+- Editor Camera                                 <-- INCOMPLETE
+- Memory Allocation                             <-- INCOMPLETE
 
 You got this! :3
