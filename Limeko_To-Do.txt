@@ -7,7 +7,7 @@
 
 # Incomplete
 - Editor UI                                     <-- Incomplete
-- 'Prism' Rendering Pipeline                    <-- Incomplete
+- 'Prism' / 'Prismatic' Rendering Pipeline      <-- Incomplete
 - Saving Level data                             <-- Incomplete
 - Loading Level data                            <-- Incomplete
 - Editor Camera                                 <-- Incomplete
