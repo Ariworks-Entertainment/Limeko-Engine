@@ -1,8 +1,17 @@
-- Basic flow for Creating Projects              <-- COMPLETE
-- Dear ImGui Integration                        <-- COMPLETE
-- Saving Level data                             <-- IN PROGRESS
-- Loading Level data                            <-- INCOMPLETE
-- Editor Camera                                 <-- INCOMPLETE
-- Memory Allocation                             <-- INCOMPLETE
+# Complete
+- Dear ImGui Integration                        <-- Complete
+- Basic flow for Creating Projects              <-- Complete
 
+# In-Progress
+[None]
+
+# Incomplete
+- Editor UI                                     <-- Incomplete
+- 'Prism' Rendering Pipeline                    <-- Incomplete
+- Saving Level data                             <-- Incomplete
+- Loading Level data                            <-- Incomplete
+- Editor Camera                                 <-- Incomplete
+- Memory Allocation                             <-- Incomplete
+
+# Notes
 You got this! :3
